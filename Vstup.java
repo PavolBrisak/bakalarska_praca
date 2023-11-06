@@ -9,7 +9,7 @@ public class Vstup {
 
     }
 
-    public ArrayList<Spoj> nacitajSpoje(String nazovSuboru) throws IOException{
+    public ArrayList<Spoj> read(String nazovSuboru) throws IOException{
         BufferedReader br = new BufferedReader(new FileReader(nazovSuboru));
         try {
             String line = br.readLine();
