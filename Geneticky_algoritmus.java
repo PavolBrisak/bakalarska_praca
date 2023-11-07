@@ -1,4 +1,6 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 public class Geneticky_algoritmus {
     private final ArrayList<Riesenie> pociatocnaPopulacia = new ArrayList<>();
@@ -39,6 +41,19 @@ public class Geneticky_algoritmus {
     }
 
     public void novaPermutacia() {
+        Random random = new Random();
+        int pocetVymen = random.nextInt(this.spoje.size()) + 1;
+        System.out.println("pocetVymen - " + pocetVymen);
+        for (int i = 0; i < pocetVymen; i++) {
+            int index1 = random.nextInt(this.spoje.size());
+            int index2;
+            do {
+                index2 = random.nextInt(this.spoje.size());
+            } while (index2 == index1);
+            System.out.println("index1 - " + index1);
+            System.out.println("index2 - " + index2);
 
+            Collections.swap(this.spoje, index1, index2);
+        }
     }
 }

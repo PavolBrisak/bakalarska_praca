@@ -1,3 +1,5 @@
+import java.lang.Integer;
+
 public class Spoj {
     private String casOdString;
     private String casDoString;
@@ -13,13 +15,14 @@ public class Spoj {
         this.casDoString = casDo;
         this.miestoOd = miestoOd;
         this.miestoDo = miestoDo;
-        this.casDo = this.getCasInSeconds(this.casDoString);
         this.casOd = this.getCasInSeconds(this.casOdString);
+        this.casDo = this.getCasInSeconds(this.casDoString);
         this.id = id;
 
     }
 
     public int getCasInSeconds(String cas) {
+        cas = cas.replace("\uFEFF", "").trim();
         String[] timeParts = cas.split(":");
         if (timeParts.length == 2) {
             int hours = Integer.parseInt(timeParts[0]);
