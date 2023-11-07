@@ -5,15 +5,17 @@ public class Spoj {
     private String miestoDo;
     private int casOd;
     private int casDo;
+    private int id;
 
 
-    public Spoj(String casOd, String casDo, String miestoOd, String miestoDo) {
+    public Spoj(String casOd, String casDo, String miestoOd, String miestoDo, int id) {
         this.casOdString = casOd;
         this.casDoString = casDo;
         this.miestoOd = miestoOd;
         this.miestoDo = miestoDo;
         this.casDo = this.getCasInSeconds(this.casDoString);
         this.casOd = this.getCasInSeconds(this.casOdString);
+        this.id = id;
 
     }
 
@@ -29,7 +31,7 @@ public class Spoj {
     }
 
     public int getCasOd() {
-        return casOd;
+        return this.casOd;
     }
 
     public void setCasOd(int casOd) {
@@ -37,31 +39,16 @@ public class Spoj {
     }
 
     public int getCasDo() {
-        return casDo;
+        return this.casDo;
     }
 
     public void setCasDo(int casDo) {
         this.casDo = casDo;
     }
 
-    public String getCasOdString() {
-        return casOdString;
-    }
-
-    public void setCasOdString(String casOdString) {
-        this.casOdString = casOdString;
-    }
-
-    public String getCasDoString() {
-        return casDoString;
-    }
-
-    public void setCasDoString(String casDoString) {
-        this.casDoString = casDoString;
-    }
 
     public String getMiestoOd() {
-        return miestoOd;
+        return this.miestoOd;
     }
 
     public void setMiestoOd(String miestoOd) {
@@ -69,20 +56,25 @@ public class Spoj {
     }
 
     public String getMiestoDo() {
-        return miestoDo;
+        return this.miestoDo;
     }
 
     public void setMiestoDo(String miestoDo) {
         this.miestoDo = miestoDo;
     }
 
+    public int getId() {
+        return this.id;
+    }
+
     @Override
     public String toString() {
         return "Spoj{" +
-                "casOd='" + casOd + '\'' +
-                ", casDo='" + casDo + '\'' +
-                ", miestoOd='" + miestoOd + '\'' +
-                ", miestoDo='" + miestoDo + '\'' +
+                "id='" + this.id + '\'' +
+                "casOd='" + this.casOd + '\'' +
+                ", casDo='" + this.casDo + '\'' +
+                ", miestoOd='" + this.miestoOd + '\'' +
+                ", miestoDo='" + this.miestoDo + '\'' +
                 '}';
     }
 }
