@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class Riesenie {
     private final ArrayList<Turnus> turnusy = new ArrayList<>();
+    private int ohodnotenie;
 
     public Riesenie() {
     }
@@ -12,6 +13,14 @@ public class Riesenie {
 
     public ArrayList<Turnus> getTurnusy() {
         return this.turnusy;
+    }
+
+    public int getOhodnotenie() {
+        return ohodnotenie;
+    }
+
+    public void setOhodnotenie(int ohodnotenie) {
+        this.ohodnotenie = ohodnotenie;
     }
 
     public void vypis() {
