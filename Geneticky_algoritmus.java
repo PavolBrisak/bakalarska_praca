@@ -4,29 +4,20 @@ import java.util.Random;
 
 public class Geneticky_algoritmus {
     private ArrayList<Riesenie> staraPopulacia = new ArrayList<>();
+    private ArrayList<Riesenie> novaPopulacia = new ArrayList<>();
     private ArrayList<Spoj> spoje;
     private Riesenie DNNR;
+    private int velkostPopulacie;
 
-    public Geneticky_algoritmus(ArrayList<Spoj> nacitaneSpoje) {
+    public Geneticky_algoritmus(ArrayList<Spoj> nacitaneSpoje, int velkostPopulacie) {
         this.spoje = nacitaneSpoje;
-        this.vytvorPociatocnuPopulaciu();
+        this.velkostPopulacie = velkostPopulacie;
+        this.vytvorPociatocnuPopulaciu(velkostPopulacie);
         this.DNNR = this.dajNajlepsieRiesenie();
     }
 
-    private Riesenie dajNajlepsieRiesenie() {
-        Riesenie najlepsieRiesenie = new Riesenie();
-        najlepsieRiesenie.setOhodnotenie(0);
-        for (Riesenie riesenie:this.staraPopulacia) {
-            if (riesenie.getOhodnotenie() > najlepsieRiesenie.getOhodnotenie()) {
-                najlepsieRiesenie = riesenie;
-            }
-        }
-        return najlepsieRiesenie;
-    }
-
-    public void vytvorPociatocnuPopulaciu() {
-        int pocetPermutacii = 50;
-        for (int i = 0; i < pocetPermutacii; i++) {
+    public void vytvorPociatocnuPopulaciu(int velkostPopulacie) {
+        for (int i = 0; i < velkostPopulacie; i++) {
             Riesenie noveRiesenie = new Riesenie();
             for (Spoj spoj : this.spoje) {
                 if (noveRiesenie.getTurnusy().size() == 0) {
@@ -54,26 +45,31 @@ public class Geneticky_algoritmus {
         }
     }
 
-    public void genetickyAlgoritmus() {
+    public void genetickyAlgoritmus(double percentoTopRieseni) {
         int pocetIteracii = 0;
         int pocetNeaktualizovaniaDNNR = 0;
         while ((pocetIteracii <= 1000) || (pocetNeaktualizovaniaDNNR <= 200)) {
-            ArrayList<Riesenie> novaPopulacia = new ArrayList<>();
-            //TODO nastavit cyklus na prechadzanie vsetkych rodicov
+            //ArrayList<Riesenie> novaPopulacia = new ArrayList<>();
+            //TODO tu mozno pridat doplnenie rieseni zo starej populacie do novej
+            this.naplnenieTopRieseniami(this.novaPopulacia, percentoTopRieseni);
+            //TODO nastavit cyklus na prechadzanie vsetkych rodicov, cize az kym nie je nova populacia plna
             int indexRodic1 = this.dajPoziciuRodica();
             int indexRodic2;
             do {
                 indexRodic2 = this.dajPoziciuRodica();
             } while (indexRodic1 == indexRodic2);
             Riesenie potomok = this.krizenie(indexRodic1, indexRodic2);
+            this.mutacia(potomok);
             //TODO skontroluj potomka, ak je chybny, oprav ho a ohodnot ho
-            novaPopulacia.add(potomok);
-            this.staraPopulacia = novaPopulacia;
+            //novaPopulacia.add(potomok);
+            this.novaPopulacia.add(potomok);
+            this.nahradenieStarejNovou();
             pocetIteracii++;
             //TODO ak nenastalo aktualizovanie
             pocetNeaktualizovaniaDNNR++;
         }
     }
+
 
     public void novaPermutacia() {
         Random random = new Random();
@@ -96,12 +92,12 @@ public class Geneticky_algoritmus {
         riesenie.setOhodnotenie(riesenie.getTurnusy().size());
     }
 
-    public int dajPoziciuRodica() {
+    private int dajPoziciuRodica() {
         Random random = new Random();
         return random.nextInt(0, this.staraPopulacia.size());
     }
 
-    public Riesenie krizenie(int poziciaRodica1, int poziciaRodica2) {
+    private Riesenie krizenie(int poziciaRodica1, int poziciaRodica2) {
         Random random = new Random();
         int bodKrizeniaRodic1 = random.nextInt(0,this.staraPopulacia.get(poziciaRodica1).getTurnusy().size());
         Riesenie potomok = new Riesenie();
@@ -113,5 +109,38 @@ public class Geneticky_algoritmus {
             potomok.pridajTurnus(this.staraPopulacia.get(poziciaRodica2).getTurnusy().get(i));
         }
         return potomok;
+    }
+
+    private void mutacia(Riesenie riesenie) {
+
+    }
+
+    private Riesenie dajNajlepsieRiesenie() {
+        Riesenie najlepsieRiesenie = new Riesenie();
+        najlepsieRiesenie.setOhodnotenie(0);
+        for (Riesenie riesenie:this.staraPopulacia) {
+            if (riesenie.getOhodnotenie() > najlepsieRiesenie.getOhodnotenie()) {
+                najlepsieRiesenie = riesenie;
+            }
+        }
+        return najlepsieRiesenie;
+    }
+
+    private void nahradenieStarejNovou() {
+        if (this.staraPopulacia.size() > 0) {
+            this.staraPopulacia.subList(0, this.staraPopulacia.size()).clear();
+        }
+        this.staraPopulacia.addAll(this.novaPopulacia);
+        if (this.novaPopulacia.size() > 0) {
+            this.novaPopulacia.subList(0, this.novaPopulacia.size()).clear();
+        }
+    }
+
+    private void naplnenieTopRieseniami(ArrayList<Riesenie> novaPopulacia, double percentoTopRieseni) {
+        ArrayList<Riesenie> pomocnaPopulacia = this.staraPopulacia;
+        //TODO usporiadaj staru populaciu podla hodnotenia
+        //TODO vzpocitat kolko je percentoTopRieseni z velkosti novejPop
+        //TODO pridat do novej tych niekolko rieseni zo starej
+
     }
 }

@@ -8,7 +8,7 @@ public class main {
         for (Spoj spoj:nacitaneSpoje) {
             System.out.println(spoj.toString());
         }
-        Geneticky_algoritmus GA = new Geneticky_algoritmus(nacitaneSpoje);
-        GA.genetickyAlgoritmus();
+        Geneticky_algoritmus GA = new Geneticky_algoritmus(nacitaneSpoje, 50);
+        GA.genetickyAlgoritmus(0.2);
     }
 }
