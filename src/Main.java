@@ -1,10 +1,12 @@
+package src;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class main {
+public class Main {
     public static void main(String[] args) throws IOException {
         Vstup scanner = new Vstup();
-        ArrayList<Spoj> nacitaneSpoje = scanner.read("data_spoje.csv");
+        ArrayList<Spoj> nacitaneSpoje = scanner.read("input_data/data_spoje.csv");
         for (Spoj spoj:nacitaneSpoje) {
             System.out.println(spoj.toString());
         }

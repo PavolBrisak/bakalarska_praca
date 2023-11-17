@@ -1,3 +1,5 @@
+package src;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -161,7 +163,6 @@ public class Geneticky_algoritmus {
                 }
             }
         }
-
     }
 
     private ArrayList<Turnus> dajNajlepsieRiesenie() {

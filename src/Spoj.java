@@ -1,3 +1,5 @@
+package src;
+
 import java.lang.Integer;
 
 public class Spoj {
@@ -72,7 +74,7 @@ public class Spoj {
 
     @Override
     public String toString() {
-        return "Spoj{" +
+        return "src.Spoj{" +
                 "id='" + this.id + '\'' +
                 "casOd='" + this.casOd + '\'' +
                 ", casDo='" + this.casDo + '\'' +

@@ -1,3 +1,5 @@
+package src;
+
 import java.util.ArrayList;
 
 public class Turnus {
@@ -22,10 +24,11 @@ public class Turnus {
             Spoj currentSpoj = this.spoje.get(i);
             Spoj nextSpoj = this.spoje.get(i + 1);
 
-            if (spoj.getCasOd() >= currentSpoj.getCasDo() && spoj.getCasDo() <= nextSpoj.getCasOd()) {
+            if (spoj.getCasOd() > currentSpoj.getCasDo() && spoj.getCasDo() < nextSpoj.getCasOd()) {
                 this.spoje.add(i + 1, spoj);
                 return true;
             }
+
         }
 
         if (spoj.getCasOd() >= this.spoje.get(this.spoje.size() - 1).getCasDo()) {
@@ -36,14 +39,14 @@ public class Turnus {
     }
 
     public void vypis() {
-        String text = "D - ";
+        StringBuilder text = new StringBuilder("D - ");
         for (Spoj spoj:this.spoje) {
-            text += spoj.getId() + " - ";
+            text.append(spoj.getId()).append(" - ");
         }
         System.out.println(text + "D");
     }
 
     public ArrayList<Spoj> getSpoje() {
-        return spoje;
+        return this.spoje;
     }
 }
