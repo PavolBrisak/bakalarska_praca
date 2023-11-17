@@ -7,14 +7,16 @@ public class Geneticky_algoritmus {
     private ArrayList<Riesenie> staraPopulacia = new ArrayList<>();
     private ArrayList<Riesenie> novaPopulacia = new ArrayList<>();
     private ArrayList<Spoj> spoje;
-    private Riesenie DNNR;
+    private Riesenie DNNR = new Riesenie();
     private int velkostPopulacie;
 
     public Geneticky_algoritmus(ArrayList<Spoj> nacitaneSpoje, int velkostPopulacie) {
         this.spoje = nacitaneSpoje;
         this.velkostPopulacie = velkostPopulacie;
         this.vytvorPociatocnuPopulaciu(velkostPopulacie);
-        this.DNNR = this.dajNajlepsieRiesenie();
+        for (Turnus turnus:this.dajNajlepsieRiesenie()) {
+            this.DNNR.pridajTurnus(turnus);
+        }
     }
 
     public void vytvorPociatocnuPopulaciu(int velkostPopulacie) {
@@ -28,7 +30,7 @@ public class Geneticky_algoritmus {
                 } else {
                     boolean pridany = false;
                     for (Turnus turnus : noveRiesenie.getTurnusy()) {
-                        if (turnus.daSaPridat(spoj)) {
+                        if (turnus.pridalSa(spoj)) {
                             pridany = true;
                             break;
                         }
@@ -46,12 +48,11 @@ public class Geneticky_algoritmus {
         }
     }
 
-    public void genetickyAlgoritmus(double percentoTopRieseni) {
-        int pocetIteracii = 0;
-        int pocetNeaktualizovaniaDNNR = 0;
+    public void genetickyAlgoritmus(int pocetIteracii, int pocetNeaktualizovaniaDNNR, int pocetMutacii, double pravdepodobnostMutacie, double percentoTopRieseni) {
+        int iteracia = 1;
+        int neaktualizovaneDNNR = 0;
         boolean dosloKAktualizaciiDNNR = false;
-        while ((pocetIteracii <= 1000) && (pocetNeaktualizovaniaDNNR < 200)) {
-            //TODO tu mozno pridat doplnenie rieseni zo starej populacie do novej
+        while ((iteracia <= pocetIteracii) && (neaktualizovaneDNNR < pocetNeaktualizovaniaDNNR)) {
             this.naplnenieTopRieseniami(percentoTopRieseni);
             while (this.novaPopulacia.size() != this.velkostPopulacie) {
                 int indexRodic1 = this.dajPoziciuRodica();
@@ -60,22 +61,27 @@ public class Geneticky_algoritmus {
                     indexRodic2 = this.dajPoziciuRodica();
                 } while (indexRodic1 == indexRodic2);
                 Riesenie potomok = this.krizenie(indexRodic1, indexRodic2);
-                this.mutacia(potomok);
-                //TODO skontroluj potomka, ak je chybny, oprav ho a ohodnot ho
+                for (int i = 0; i < pocetMutacii; i++) {
+                    if (Math.random() < pravdepodobnostMutacie) {
+                        this.mutacia(potomok);
+                    }
+                }
                 this.ohodnotRiesenie(potomok);
                 if (this.jeLepsiAkoDNNR(potomok)) {
-                    this.DNNR = potomok;
+                    this.aktualizujDNNR(potomok);
                     dosloKAktualizaciiDNNR = true;
                 }
                 this.novaPopulacia.add(potomok);
             }
             this.nahradenieStarejNovou();
-            pocetIteracii++;
+            iteracia++;
             if (dosloKAktualizaciiDNNR) {
-                pocetNeaktualizovaniaDNNR++;
+                neaktualizovaneDNNR++;
             }
         }
     }
+
+
 
 
     public void novaPermutacia() {
@@ -118,11 +124,47 @@ public class Geneticky_algoritmus {
         return potomok;
     }
 
-    private void mutacia(Riesenie riesenie) {
+    private void mutacia(Riesenie potomok) {
+        ArrayList<Spoj> vybraneSpoje = new ArrayList<>();
+        Random random = new Random();
+        int indexTurnusu = 0;
+        int pocetVybranychSpojov = random.nextInt(1, potomok.getPocetSpojov() + 1);
+        for (int i = pocetVybranychSpojov; i > 0; i--) {
+            do {
+                indexTurnusu = random.nextInt(0, potomok.getTurnusy().size());
+            } while (potomok.getTurnusy().get(indexTurnusu).getSpoje().size() == 0);
+            int indexSpoja = random.nextInt(0, potomok.getTurnusy().get(indexTurnusu).getSpoje().size());
+            Spoj vybrany = potomok.getTurnusy().get(indexTurnusu).getSpoje().remove(indexSpoja);
+            if (potomok.getTurnusy().get(indexTurnusu).getSpoje().size() == 0) {
+                potomok.getTurnusy().remove(indexTurnusu);
+            }
+            vybraneSpoje.add(vybrany);
+        }
+        Collections.shuffle(vybraneSpoje);
+        for (Spoj spoj : vybraneSpoje) {
+            if (potomok.getTurnusy().size() == 0) {
+                Turnus novyTurnus = new Turnus();
+                novyTurnus.pridajSpoj(spoj);
+                potomok.pridajTurnus(novyTurnus);
+            } else {
+                boolean pridany = false;
+                for (Turnus turnus : potomok.getTurnusy()) {
+                    if (turnus.pridalSa(spoj)) {
+                        pridany = true;
+                        break;
+                    }
+                }
+                if (!pridany) {
+                    Turnus novyTurnus = new Turnus();
+                    novyTurnus.pridajSpoj(spoj);
+                    potomok.pridajTurnus(novyTurnus);
+                }
+            }
+        }
 
     }
 
-    private Riesenie dajNajlepsieRiesenie() {
+    private ArrayList<Turnus> dajNajlepsieRiesenie() {
         Riesenie najlepsieRiesenie = new Riesenie();
         najlepsieRiesenie.setOhodnotenie(0);
         for (Riesenie riesenie:this.staraPopulacia) {
@@ -130,7 +172,7 @@ public class Geneticky_algoritmus {
                 najlepsieRiesenie = riesenie;
             }
         }
-        return najlepsieRiesenie;
+        return najlepsieRiesenie.getTurnusy();
     }
 
     private void nahradenieStarejNovou() {
@@ -159,5 +201,12 @@ public class Geneticky_algoritmus {
 
     private boolean jeLepsiAkoDNNR(Riesenie potomok) {
         return (this.DNNR.getOhodnotenie() > potomok.getOhodnotenie());
+    }
+
+    private void aktualizujDNNR(Riesenie potomok) {
+        if (this.DNNR.getTurnusy().size() > 0) {
+            this.DNNR.getTurnusy().subList(0, this.DNNR.getTurnusy().size()).clear();
+        }
+        this.DNNR.getTurnusy().addAll(potomok.getTurnusy());
     }
 }

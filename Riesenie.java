@@ -30,4 +30,12 @@ public class Riesenie {
         }
         System.out.println("*************************");
     }
+
+    public int getPocetSpojov() {
+        int pocetSpojov = 0;
+        for (Turnus turnus:this.getTurnusy()) {
+            pocetSpojov += turnus.getSpoje().size();
+        }
+        return pocetSpojov;
+    }
 }

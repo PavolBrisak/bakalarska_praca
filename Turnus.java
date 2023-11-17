@@ -11,37 +11,27 @@ public class Turnus {
         this.spoje.add(spoj);
     }
 
-    public boolean daSaPridat(Spoj spoj) {
+    public boolean pridalSa(Spoj spoj) {
         if (this.spoje.isEmpty()) {
+            this.spoje.add(spoj);
             return true;
         }
-
-        int spojCasOd = spoj.getCasOd();
-        int spojCasDo = spoj.getCasDo();
-
-
-        if (spojCasDo < this.spoje.get(0).getCasOd()) {
-            this.spoje.add(0, spoj);
-            return true;
-        }
-
+        //TODO kontrola stanic kde konci spoj
 
         for (int i = 0; i < this.spoje.size() - 1; i++) {
             Spoj currentSpoj = this.spoje.get(i);
             Spoj nextSpoj = this.spoje.get(i + 1);
 
-            if (spojCasOd >= currentSpoj.getCasDo() && spojCasDo <= nextSpoj.getCasOd()) {
+            if (spoj.getCasOd() >= currentSpoj.getCasDo() && spoj.getCasDo() <= nextSpoj.getCasOd()) {
                 this.spoje.add(i + 1, spoj);
                 return true;
             }
         }
 
-
-        if (spojCasOd >= this.spoje.get(this.spoje.size() - 1).getCasDo()) {
+        if (spoj.getCasOd() >= this.spoje.get(this.spoje.size() - 1).getCasDo()) {
             this.spoje.add(spoj);
             return true;
         }
-
         return false;
     }
 
@@ -53,4 +43,7 @@ public class Turnus {
         System.out.println(text + "D");
     }
 
+    public ArrayList<Spoj> getSpoje() {
+        return spoje;
+    }
 }

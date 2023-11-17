@@ -9,6 +9,6 @@ public class main {
             System.out.println(spoj.toString());
         }
         Geneticky_algoritmus GA = new Geneticky_algoritmus(nacitaneSpoje, 50);
-        GA.genetickyAlgoritmus(0.2);
+        GA.genetickyAlgoritmus(1000,200,5,0.4, 0.2);
     }
 }
