@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Random;
 
 public class Geneticky_algoritmus {
@@ -48,25 +49,31 @@ public class Geneticky_algoritmus {
     public void genetickyAlgoritmus(double percentoTopRieseni) {
         int pocetIteracii = 0;
         int pocetNeaktualizovaniaDNNR = 0;
-        while ((pocetIteracii <= 1000) || (pocetNeaktualizovaniaDNNR <= 200)) {
-            //ArrayList<Riesenie> novaPopulacia = new ArrayList<>();
+        boolean dosloKAktualizaciiDNNR = false;
+        while ((pocetIteracii <= 1000) && (pocetNeaktualizovaniaDNNR < 200)) {
             //TODO tu mozno pridat doplnenie rieseni zo starej populacie do novej
-            this.naplnenieTopRieseniami(this.novaPopulacia, percentoTopRieseni);
-            //TODO nastavit cyklus na prechadzanie vsetkych rodicov, cize az kym nie je nova populacia plna
-            int indexRodic1 = this.dajPoziciuRodica();
-            int indexRodic2;
-            do {
-                indexRodic2 = this.dajPoziciuRodica();
-            } while (indexRodic1 == indexRodic2);
-            Riesenie potomok = this.krizenie(indexRodic1, indexRodic2);
-            this.mutacia(potomok);
-            //TODO skontroluj potomka, ak je chybny, oprav ho a ohodnot ho
-            //novaPopulacia.add(potomok);
-            this.novaPopulacia.add(potomok);
+            this.naplnenieTopRieseniami(percentoTopRieseni);
+            while (this.novaPopulacia.size() != this.velkostPopulacie) {
+                int indexRodic1 = this.dajPoziciuRodica();
+                int indexRodic2;
+                do {
+                    indexRodic2 = this.dajPoziciuRodica();
+                } while (indexRodic1 == indexRodic2);
+                Riesenie potomok = this.krizenie(indexRodic1, indexRodic2);
+                this.mutacia(potomok);
+                //TODO skontroluj potomka, ak je chybny, oprav ho a ohodnot ho
+                this.ohodnotRiesenie(potomok);
+                if (this.jeLepsiAkoDNNR(potomok)) {
+                    this.DNNR = potomok;
+                    dosloKAktualizaciiDNNR = true;
+                }
+                this.novaPopulacia.add(potomok);
+            }
             this.nahradenieStarejNovou();
             pocetIteracii++;
-            //TODO ak nenastalo aktualizovanie
-            pocetNeaktualizovaniaDNNR++;
+            if (dosloKAktualizaciiDNNR) {
+                pocetNeaktualizovaniaDNNR++;
+            }
         }
     }
 
@@ -136,11 +143,21 @@ public class Geneticky_algoritmus {
         }
     }
 
-    private void naplnenieTopRieseniami(ArrayList<Riesenie> novaPopulacia, double percentoTopRieseni) {
-        ArrayList<Riesenie> pomocnaPopulacia = this.staraPopulacia;
-        //TODO usporiadaj staru populaciu podla hodnotenia
-        //TODO vzpocitat kolko je percentoTopRieseni z velkosti novejPop
-        //TODO pridat do novej tych niekolko rieseni zo starej
+    private void naplnenieTopRieseniami(double percentoTopRieseni) {
+        ArrayList<Riesenie> pomocnaPopulacia = new ArrayList<>(this.staraPopulacia);
+        double pocet;
+        if (percentoTopRieseni > 0 && percentoTopRieseni <= 1) {
+            pocet = ((percentoTopRieseni * 100) * this.velkostPopulacie) / 100;
+            pomocnaPopulacia.sort(Comparator.comparingDouble(Riesenie::getOhodnotenie));
+            for (int i = 0; i <= pocet; i++) {
+                this.novaPopulacia.add(pomocnaPopulacia.get(i));
+            }
+        } else {
+            System.out.println("Nesprávne zadané percento top riešení. Má byť medzi 0 a 1");
+        }
+    }
 
+    private boolean jeLepsiAkoDNNR(Riesenie potomok) {
+        return (this.DNNR.getOhodnotenie() > potomok.getOhodnotenie());
     }
 }
