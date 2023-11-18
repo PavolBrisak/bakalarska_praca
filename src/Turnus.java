@@ -1,6 +1,7 @@
 package src;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Turnus {
     private final ArrayList<Spoj> spoje = new ArrayList<>();
@@ -18,17 +19,30 @@ public class Turnus {
             this.spoje.add(spoj);
             return true;
         }
-        //TODO kontrola stanic kde konci spoj
 
         for (int i = 0; i < this.spoje.size() - 1; i++) {
             Spoj currentSpoj = this.spoje.get(i);
             Spoj nextSpoj = this.spoje.get(i + 1);
 
-            if (spoj.getCasOd() > currentSpoj.getCasDo() && spoj.getCasDo() < nextSpoj.getCasOd()) {
+            if ((spoj.getCasOd() == currentSpoj.getCasDo()) && (spoj.getMiestoOd().equals(currentSpoj.getMiestoDo())) && (spoj.getCasDo() < nextSpoj.getCasOd())) {
                 this.spoje.add(i + 1, spoj);
                 return true;
             }
 
+            if ((spoj.getCasOd() > currentSpoj.getCasDo()) && (spoj.getMiestoDo().equals(nextSpoj.getMiestoOd())) && (spoj.getCasDo() == nextSpoj.getCasOd())) {
+                this.spoje.add(i + 1, spoj);
+                return true;
+            }
+
+            if ((spoj.getCasOd() == currentSpoj.getCasDo()) && (spoj.getMiestoOd().equals(currentSpoj.getMiestoDo())) && (spoj.getCasDo() == nextSpoj.getCasOd()) && (spoj.getMiestoDo().equals(nextSpoj.getMiestoOd()))) {
+                this.spoje.add(i + 1, spoj);
+                return true;
+            }
+
+            if (spoj.getCasOd() > currentSpoj.getCasDo() && spoj.getCasDo() < nextSpoj.getCasOd()) {
+                this.spoje.add(i + 1, spoj);
+                return true;
+            }
         }
 
         if (spoj.getCasOd() >= this.spoje.get(this.spoje.size() - 1).getCasDo()) {
