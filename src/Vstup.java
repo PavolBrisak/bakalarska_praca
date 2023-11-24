@@ -13,28 +13,32 @@ public class Vstup {
 
     }
 
-    public ArrayList<Spoj> read(String nazovSuboru) throws IOException{
-        BufferedReader br = new BufferedReader(new FileReader(nazovSuboru));
-        int i = 1;
-        try {
+    public ArrayList<Spoj> read(String nazovSuboru) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(nazovSuboru))) {
+            br.readLine();
             String line = br.readLine();
             while (line != null) {
                 String[] parts = line.split(";");
-                if (parts.length == 4) {
-                    String casOd = parts[0];
-                    String casDo = parts[1];
-                    String miestoOd = parts[2];
-                    String miestoDo = parts[3];
-                    Spoj spoj = new Spoj(casOd, casDo, miestoOd, miestoDo, i);
-                    this.spoje.add(spoj);
+                if (parts.length == 11) {
+                    int index = Integer.parseInt(parts[0]);
+                    String id = parts[1];
+                    String spoj = parts[2];
+                    String linka = parts[3];
+                    int miestoOd = Integer.parseInt(parts[4]);
+                    int miestoDo = Integer.parseInt(parts[5]);
+                    int casOd = Integer.parseInt(parts[6]);
+                    int casDo = Integer.parseInt(parts[7]);
+                    int trvanie = Integer.parseInt(parts[8]);
+                    double vzdialenost = Double.parseDouble(parts[9]);
+                    double spotreba = Double.parseDouble(parts[10]);
+                    Spoj spojObj = new Spoj(index, id, spoj, linka, miestoOd, miestoDo, casOd, casDo, trvanie, vzdialenost, spotreba);
+                    this.spoje.add(spojObj);
                 }
                 line = br.readLine();
-                i++;
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return this.spoje;
     }
 }

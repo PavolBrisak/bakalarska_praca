@@ -50,41 +50,43 @@ public class Geneticky_algoritmus {
         }
     }
 
-    public void genetickyAlgoritmus(int pocetIteracii, int pocetNeaktualizovaniaDNNR, int pocetMutacii, double pravdepodobnostMutacie, double percentoTopRieseni) {
+    public void genetickyAlgoritmus(int pocetIteracii, int pocetNeaktualizovaniaDNNR, double pravdepodobnostKrizenia, int pocetMutacii, double pravdepodobnostMutacie, double percentoTopRieseni) {
         int iteracia = 1;
         int neaktualizovaneDNNR = 0;
         boolean dosloKAktualizaciiDNNR = false;
         while ((iteracia <= pocetIteracii) && (neaktualizovaneDNNR < pocetNeaktualizovaniaDNNR)) {
             this.naplnenieTopRieseniami(percentoTopRieseni);
             while (this.novaPopulacia.size() != this.velkostPopulacie) {
-                int indexRodic1 = this.dajPoziciuRodica();
-                int indexRodic2;
-                do {
-                    indexRodic2 = this.dajPoziciuRodica();
-                } while (indexRodic1 == indexRodic2);
-                Riesenie potomok = this.krizenie(indexRodic1, indexRodic2);
-                for (int i = 0; i < pocetMutacii; i++) {
-                    if (Math.random() < pravdepodobnostMutacie) {
-                        this.mutacia(potomok);
+                if (Math.random() <= pravdepodobnostKrizenia) {
+                    int indexRodic1 = this.dajPoziciuRodica();
+                    int indexRodic2;
+                    do {
+                        indexRodic2 = this.dajPoziciuRodica();
+                    } while (indexRodic1 == indexRodic2);
+                    Riesenie potomok = this.krizenie(indexRodic1, indexRodic2);
+                    //TODO opravit potomka po krizeni
+                    for (int i = 0; i < pocetMutacii; i++) {
+                        if (Math.random() <= pravdepodobnostMutacie) {
+                            this.mutacia(potomok);
+                        }
                     }
+                    this.ohodnotRiesenie(potomok);
+                    if (this.jeLepsiAkoDNNR(potomok)) {
+                        this.aktualizujDNNR(potomok);
+                        dosloKAktualizaciiDNNR = true;
+                    }
+                    this.novaPopulacia.add(potomok);
                 }
-                this.ohodnotRiesenie(potomok);
-                if (this.jeLepsiAkoDNNR(potomok)) {
-                    this.aktualizujDNNR(potomok);
-                    dosloKAktualizaciiDNNR = true;
-                }
-                this.novaPopulacia.add(potomok);
             }
             this.nahradenieStarejNovou();
             iteracia++;
             if (dosloKAktualizaciiDNNR) {
+                neaktualizovaneDNNR = 0;
+            } else {
                 neaktualizovaneDNNR++;
             }
         }
     }
-
-
-
 
     public void novaPermutacia() {
         Random random = new Random();
@@ -209,5 +211,9 @@ public class Geneticky_algoritmus {
             this.DNNR.getTurnusy().subList(0, this.DNNR.getTurnusy().size()).clear();
         }
         this.DNNR.getTurnusy().addAll(potomok.getTurnusy());
+    }
+
+    public void vypisDNNR() {
+        this.DNNR.vypis();
     }
 }

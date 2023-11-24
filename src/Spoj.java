@@ -3,24 +3,31 @@ package src;
 import java.lang.Integer;
 
 public class Spoj {
-    private String casOdString;
-    private String casDoString;
-    private String miestoOd;
-    private String miestoDo;
+    private int index;
+    private String id;
+    private String spoj;
+    private String linka;
+    private int miestoOd;
+    private int miestoDo;
     private int casOd;
     private int casDo;
-    private int id;
+    private int trvanie;
+    private double vzdialenost;
+    private double spotreba;
 
 
-    public Spoj(String casOd, String casDo, String miestoOd, String miestoDo, int id) {
-        this.casOdString = casOd;
-        this.casDoString = casDo;
+    public Spoj(int index, String id, String spoj, String linka, int miestoOd, int miestoDo, int casOd, int casDo, int trvanie, double vzdialenost, double spotreba) {
+        this.index = index;
+        this.id = id;
+        this.spoj = spoj;
+        this.linka = linka;
         this.miestoOd = miestoOd;
         this.miestoDo = miestoDo;
-        this.casOd = this.getCasInSeconds(this.casOdString);
-        this.casDo = this.getCasInSeconds(this.casDoString);
-        this.id = id;
-
+        this.casOd = casOd;
+        this.casDo = casDo;
+        this.trvanie = trvanie;
+        this.vzdialenost = vzdialenost;
+        this.spotreba = spotreba;
     }
 
     public int getCasInSeconds(String cas) {
@@ -35,8 +42,74 @@ public class Spoj {
         }
     }
 
+
+    @Override
+    public String toString() {
+        return "Spoj{" +
+                "index=" + index +
+                ", id='" + id + '\'' +
+                ", spoj='" + spoj + '\'' +
+                ", linka='" + linka + '\'' +
+                ", miestoOd=" + miestoOd +
+                ", miestoDo=" + miestoDo +
+                ", casOd=" + casOd +
+                ", casDo=" + casDo +
+                ", trvanie=" + trvanie +
+                ", vzdialenost=" + vzdialenost +
+                ", spotreba=" + spotreba +
+                '}';
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getSpoj() {
+        return spoj;
+    }
+
+    public void setSpoj(String spoj) {
+        this.spoj = spoj;
+    }
+
+    public String getLinka() {
+        return linka;
+    }
+
+    public void setLinka(String linka) {
+        this.linka = linka;
+    }
+
+    public int getMiestoOd() {
+        return miestoOd;
+    }
+
+    public void setMiestoOd(int miestoOd) {
+        this.miestoOd = miestoOd;
+    }
+
+    public int getMiestoDo() {
+        return miestoDo;
+    }
+
+    public void setMiestoDo(int miestoDo) {
+        this.miestoDo = miestoDo;
+    }
+
     public int getCasOd() {
-        return this.casOd;
+        return casOd;
     }
 
     public void setCasOd(int casOd) {
@@ -44,42 +117,34 @@ public class Spoj {
     }
 
     public int getCasDo() {
-        return this.casDo;
+        return casDo;
     }
 
     public void setCasDo(int casDo) {
         this.casDo = casDo;
     }
 
-
-    public String getMiestoOd() {
-        return this.miestoOd;
+    public int getTrvanie() {
+        return trvanie;
     }
 
-    public void setMiestoOd(String miestoOd) {
-        this.miestoOd = miestoOd;
+    public void setTrvanie(int trvanie) {
+        this.trvanie = trvanie;
     }
 
-    public String getMiestoDo() {
-        return this.miestoDo;
+    public double getVzdialenost() {
+        return vzdialenost;
     }
 
-    public void setMiestoDo(String miestoDo) {
-        this.miestoDo = miestoDo;
+    public void setVzdialenost(double vzdialenost) {
+        this.vzdialenost = vzdialenost;
     }
 
-    public int getId() {
-        return this.id;
+    public double getSpotreba() {
+        return spotreba;
     }
 
-    @Override
-    public String toString() {
-        return "src.Spoj{" +
-                "id='" + this.id + '\'' +
-                "casOd='" + this.casOd + '\'' +
-                ", casDo='" + this.casDo + '\'' +
-                ", miestoOd='" + this.miestoOd + '\'' +
-                ", miestoDo='" + this.miestoDo + '\'' +
-                '}';
+    public void setSpotreba(double spotreba) {
+        this.spotreba = spotreba;
     }
 }

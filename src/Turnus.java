@@ -24,17 +24,17 @@ public class Turnus {
             Spoj currentSpoj = this.spoje.get(i);
             Spoj nextSpoj = this.spoje.get(i + 1);
 
-            if ((spoj.getCasOd() == currentSpoj.getCasDo()) && (spoj.getMiestoOd().equals(currentSpoj.getMiestoDo())) && (spoj.getCasDo() < nextSpoj.getCasOd())) {
+            if ((spoj.getCasOd() == currentSpoj.getCasDo()) && (spoj.getMiestoOd() == currentSpoj.getMiestoDo()) && (spoj.getCasDo() < nextSpoj.getCasOd())) {
                 this.spoje.add(i + 1, spoj);
                 return true;
             }
 
-            if ((spoj.getCasOd() > currentSpoj.getCasDo()) && (spoj.getMiestoDo().equals(nextSpoj.getMiestoOd())) && (spoj.getCasDo() == nextSpoj.getCasOd())) {
+            if ((spoj.getCasOd() > currentSpoj.getCasDo()) && (spoj.getMiestoDo() == nextSpoj.getMiestoOd()) && (spoj.getCasDo() == nextSpoj.getCasOd())) {
                 this.spoje.add(i + 1, spoj);
                 return true;
             }
 
-            if ((spoj.getCasOd() == currentSpoj.getCasDo()) && (spoj.getMiestoOd().equals(currentSpoj.getMiestoDo())) && (spoj.getCasDo() == nextSpoj.getCasOd()) && (spoj.getMiestoDo().equals(nextSpoj.getMiestoOd()))) {
+            if ((spoj.getCasOd() == currentSpoj.getCasDo()) && (spoj.getMiestoOd() == (currentSpoj.getMiestoDo()) && (spoj.getCasDo() == nextSpoj.getCasOd()) && (spoj.getMiestoDo() == nextSpoj.getMiestoOd()))) {
                 this.spoje.add(i + 1, spoj);
                 return true;
             }
