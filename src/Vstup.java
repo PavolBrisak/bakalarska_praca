@@ -1,7 +1,5 @@
 package src;
 
-import src.Spoj;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -13,7 +11,7 @@ public class Vstup {
 
     }
 
-    public ArrayList<Spoj> read(String nazovSuboru) throws IOException {
+    public ArrayList<Spoj> nacitajSpoje(String nazovSuboru) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(nazovSuboru))) {
             br.readLine();
             String line = br.readLine();
@@ -31,8 +29,8 @@ public class Vstup {
                     int trvanie = Integer.parseInt(parts[8]);
                     double vzdialenost = Double.parseDouble(parts[9]);
                     double spotreba = Double.parseDouble(parts[10]);
-                    Spoj spojObj = new Spoj(index, id, spoj, linka, miestoOd, miestoDo, casOd, casDo, trvanie, vzdialenost, spotreba);
-                    this.spoje.add(spojObj);
+                    Spoj novySpoj = new Spoj(index, id, spoj, linka, miestoOd, miestoDo, casOd, casDo, trvanie, vzdialenost, spotreba);
+                    this.spoje.add(novySpoj);
                 }
                 line = br.readLine();
             }
@@ -40,5 +38,30 @@ public class Vstup {
             e.printStackTrace();
         }
         return this.spoje;
+    }
+
+    public int[][] nacitajMaticuVzdialenosti(String nazovSuboru) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(nazovSuboru))) {
+            int pocetRiadkov;
+            int pocetStlpcov;
+            String riadky = br.readLine();
+            pocetRiadkov = Integer.parseInt(riadky);
+            String stlpce = br.readLine();
+            pocetStlpcov = Integer.parseInt(stlpce);
+
+            int[][] matrix = new int[pocetRiadkov][pocetStlpcov];
+            for (int i = 0; i < pocetRiadkov; i++) {
+                String line = br.readLine();
+                String[] parts = line.split(";");
+
+                for (int j = 0; j < pocetStlpcov; j++) {
+                    matrix[i][j] = Integer.parseInt(parts[j]);
+                }
+            }
+            return matrix;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
