@@ -6,7 +6,7 @@ public class Geneticky_algoritmus {
     private ArrayList<Riesenie> staraPopulacia = new ArrayList<>();
     private ArrayList<Riesenie> novaPopulacia = new ArrayList<>();
     private ArrayList<Spoj> spoje;
-    private ArrayList<Spoj> pomocneSpoje;
+    private ArrayList<Spoj> pomocneSpoje = new ArrayList<>();
     private Riesenie DNNR = new Riesenie();
     private int velkostPopulacie;
     private int[][] maticaVzdialenosti;
@@ -16,10 +16,11 @@ public class Geneticky_algoritmus {
         this.pomocneSpoje.addAll(this.spoje);
         this.maticaVzdialenosti = maticaVzdialenosti;
         this.velkostPopulacie = velkostPopulacie;
-        this.vytvorPociatocnuPopulaciu(velkostPopulacie);
+        this.vytvorPociatocnuPopulaciu(this.velkostPopulacie);
         for (Turnus turnus:this.dajNajlepsieRiesenie()) {
             this.DNNR.pridajTurnus(turnus);
         }
+        this.DNNR.vypis();
     }
 
     public void vytvorPociatocnuPopulaciu(int velkostPopulacie) {
@@ -47,6 +48,7 @@ public class Geneticky_algoritmus {
                 }
             }
             this.ohodnotRiesenie(noveRiesenie);
+//            noveRiesenie.vypis();
             this.staraPopulacia.add(noveRiesenie);
             this.novaPermutacia();
         }
@@ -55,10 +57,26 @@ public class Geneticky_algoritmus {
     public void genetickyAlgoritmus(int pocetIteracii, int pocetNeaktualizovaniaDNNR, double pravdepodobnostKrizenia, int pocetMutacii, double pravdepodobnostMutacie, double percentoTopRieseni) {
         int iteracia = 1;
         int neaktualizovaneDNNR = 0;
-        boolean dosloKAktualizaciiDNNR = false;
         while ((iteracia <= pocetIteracii) && (neaktualizovaneDNNR < pocetNeaktualizovaniaDNNR)) {
+            boolean dosloKAktualizaciiDNNR = false;
+            System.out.println("iteracia - " + iteracia);
+            System.out.println("neaktulanizovaneDNNR - " + neaktualizovaneDNNR);
+
+//            System.out.println("DNNR");
+//            this.DNNR.vypis();
+
             this.naplnenieTopRieseniami(percentoTopRieseni);
-            while (this.novaPopulacia.size() != this.velkostPopulacie) {
+//            System.out.println("stara");
+//            for (Riesenie riesenie : this.staraPopulacia) {
+//                riesenie.vypis();
+//            }
+//            System.out.println("nova");
+//            for (Riesenie riesenie : this.novaPopulacia) {
+//                riesenie.vypis();
+//            }
+            while (this.novaPopulacia.size() < this.velkostPopulacie) {
+//                System.out.println(this.staraPopulacia.size());
+//                System.out.println(this.novaPopulacia.size());
                 if (Math.random() <= pravdepodobnostKrizenia) {
                     int indexRodic1 = this.dajPoziciuRodica();
                     int indexRodic2;
@@ -66,10 +84,19 @@ public class Geneticky_algoritmus {
                         indexRodic2 = this.dajPoziciuRodica();
                     } while (indexRodic1 == indexRodic2);
                     Riesenie potomok = this.krizenie(indexRodic1, indexRodic2);
+//                    System.out.println("Potomok pred upravou");
+//                    potomok.vypis();
                     this.opravPotomka(potomok);
+//                    System.out.println("Potomok po uprave");
+//                    potomok.vypis();
+
+//                    System.out.println("Potomok pred mutaciou");
+//                    potomok.vypis();
                     for (int i = 0; i < pocetMutacii; i++) {
                         if (Math.random() <= pravdepodobnostMutacie) {
                             this.mutacia(potomok);
+//                            System.out.println("Potomok po mutacii");
+//                            potomok.vypis();
                         }
                     }
                     this.ohodnotRiesenie(potomok);
@@ -77,9 +104,15 @@ public class Geneticky_algoritmus {
                         this.aktualizujDNNR(potomok);
                         dosloKAktualizaciiDNNR = true;
                     }
+//                    System.out.println("Potomok pred vkladanim");
+//                    potomok.vypis();
                     this.novaPopulacia.add(potomok);
                 }
             }
+//            System.out.println("nova");
+//            for (Riesenie riesenie : this.novaPopulacia) {
+//                riesenie.vypis();
+//            }
             this.nahradenieStarejNovou();
             iteracia++;
             if (dosloKAktualizaciiDNNR) {
@@ -117,7 +150,7 @@ public class Geneticky_algoritmus {
         Random random = new Random();
         int bodKrizeniaRodic1 = random.nextInt(0,this.staraPopulacia.get(poziciaRodica1).getTurnusy().size());
         Riesenie potomok = new Riesenie();
-        for (int i = 0; i < bodKrizeniaRodic1; i++) {
+        for (int i = 0; i <= bodKrizeniaRodic1; i++) {
             potomok.pridajTurnus(this.staraPopulacia.get(poziciaRodica1).getTurnusy().get(i));
         }
         int bodKrizeniaRodic2 = random.nextInt(0,this.staraPopulacia.get(poziciaRodica2).getTurnusy().size());
@@ -199,13 +232,14 @@ public class Geneticky_algoritmus {
                 }
             }
         }
+        potomok.vymazPrazdneTurnusy();
     }
 
     private ArrayList<Turnus> dajNajlepsieRiesenie() {
         Riesenie najlepsieRiesenie = new Riesenie();
-        najlepsieRiesenie.setOhodnotenie(0);
+        najlepsieRiesenie.setOhodnotenie(Integer.MAX_VALUE);
         for (Riesenie riesenie:this.staraPopulacia) {
-            if (riesenie.getOhodnotenie() > najlepsieRiesenie.getOhodnotenie()) {
+            if (riesenie.getOhodnotenie() < najlepsieRiesenie.getOhodnotenie()) {
                 najlepsieRiesenie = riesenie;
             }
         }
@@ -213,13 +247,33 @@ public class Geneticky_algoritmus {
     }
 
     private void nahradenieStarejNovou() {
+//        System.out.println("stara");
+//        for (Riesenie riesenie:this.staraPopulacia) {
+//            riesenie.vypis();
+//        }
         if (this.staraPopulacia.size() > 0) {
             this.staraPopulacia.subList(0, this.staraPopulacia.size()).clear();
         }
+//        System.out.println("stara vymazana");
+//        for (Riesenie riesenie:this.staraPopulacia) {
+//            riesenie.vypis();
+//        }
         this.staraPopulacia.addAll(this.novaPopulacia);
+//        System.out.println("stara pridana");
+//        for (Riesenie riesenie:this.staraPopulacia) {
+//            riesenie.vypis();
+//        }
+//        System.out.println("nova");
+//        for (Riesenie riesenie:this.novaPopulacia) {
+//            riesenie.vypis();
+//        }
         if (this.novaPopulacia.size() > 0) {
             this.novaPopulacia.subList(0, this.novaPopulacia.size()).clear();
         }
+//        System.out.println("nova vymazana");
+//        for (Riesenie riesenie:this.novaPopulacia) {
+//            riesenie.vypis();
+//        }
     }
 
     private void naplnenieTopRieseniami(double percentoTopRieseni) {
