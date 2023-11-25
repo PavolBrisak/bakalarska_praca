@@ -19,7 +19,7 @@ public class Main {
             }
             System.out.println();
         }
-        Geneticky_algoritmus GA = new Geneticky_algoritmus(nacitaneSpoje, 50);
+        Geneticky_algoritmus GA = new Geneticky_algoritmus(nacitaneSpoje,maticaVzdialenosti, 50);
         GA.genetickyAlgoritmus(1000,200,0.3,5,0.4, 0.2);
         GA.vypisDNNR();
     }

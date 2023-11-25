@@ -11,9 +11,11 @@ public class Geneticky_algoritmus {
     private ArrayList<Spoj> spoje;
     private Riesenie DNNR = new Riesenie();
     private int velkostPopulacie;
+    private int[][] maticaVzdialenosti;
 
-    public Geneticky_algoritmus(ArrayList<Spoj> nacitaneSpoje, int velkostPopulacie) {
+    public Geneticky_algoritmus(ArrayList<Spoj> nacitaneSpoje, int[][] maticaVzdialenosti, int velkostPopulacie) {
         this.spoje = nacitaneSpoje;
+        this.maticaVzdialenosti = maticaVzdialenosti;
         this.velkostPopulacie = velkostPopulacie;
         this.vytvorPociatocnuPopulaciu(velkostPopulacie);
         for (Turnus turnus:this.dajNajlepsieRiesenie()) {
@@ -32,11 +34,12 @@ public class Geneticky_algoritmus {
                 } else {
                     boolean pridany = false;
                     for (Turnus turnus : noveRiesenie.getTurnusy()) {
-                        if (turnus.pridalSa(spoj)) {
+                        if (turnus.pridalSa(spoj, this.maticaVzdialenosti)) {
                             pridany = true;
                             break;
                         }
                     }
+
                     if (!pridany) {
                         Turnus novyTurnus = new Turnus();
                         novyTurnus.pridajSpoj(spoj);
@@ -153,7 +156,7 @@ public class Geneticky_algoritmus {
             } else {
                 boolean pridany = false;
                 for (Turnus turnus : potomok.getTurnusy()) {
-                    if (turnus.pridalSa(spoj)) {
+                    if (turnus.pridalSa(spoj, this.maticaVzdialenosti)) {
                         pridany = true;
                         break;
                     }

@@ -42,24 +42,6 @@ public class Spoj {
         }
     }
 
-
-    @Override
-    public String toString() {
-        return "Spoj{" +
-                "index=" + index +
-                ", id='" + id + '\'' +
-                ", spoj='" + spoj + '\'' +
-                ", linka='" + linka + '\'' +
-                ", miestoOd=" + miestoOd +
-                ", miestoDo=" + miestoDo +
-                ", casOd=" + casOd +
-                ", casDo=" + casDo +
-                ", trvanie=" + trvanie +
-                ", vzdialenost=" + vzdialenost +
-                ", spotreba=" + spotreba +
-                '}';
-    }
-
     public int getIndex() {
         return index;
     }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Turnus {
-    private final ArrayList<Spoj> spoje = new ArrayList<>();
+    private ArrayList<Spoj> spoje = new ArrayList<>();
 
     public Turnus() {
 
@@ -14,38 +14,30 @@ public class Turnus {
         this.spoje.add(spoj);
     }
 
-    public boolean pridalSa(Spoj spoj) {
+    public boolean pridalSa(Spoj spoj, int[][] maticaVzdialenosti) {
         if (this.spoje.isEmpty()) {
             this.spoje.add(spoj);
             return true;
+        }
+
+        if (this.spoje.size() == 1) {
+            if ((this.spoje.get(0).getCasDo() <= spoj.getCasOd()) && (maticaVzdialenosti[this.spoje.get(0).getIndex()][spoj.getIndex()] <= (spoj.getCasOd() - this.spoje.get(0).getCasDo()))) {
+                this.spoje.add(spoj);
+                return true;
+            }
         }
 
         for (int i = 0; i < this.spoje.size() - 1; i++) {
             Spoj currentSpoj = this.spoje.get(i);
             Spoj nextSpoj = this.spoje.get(i + 1);
 
-            if ((spoj.getCasOd() == currentSpoj.getCasDo()) && (spoj.getMiestoOd() == currentSpoj.getMiestoDo()) && (spoj.getCasDo() < nextSpoj.getCasOd())) {
-                this.spoje.add(i + 1, spoj);
-                return true;
-            }
-
-            if ((spoj.getCasOd() > currentSpoj.getCasDo()) && (spoj.getMiestoDo() == nextSpoj.getMiestoOd()) && (spoj.getCasDo() == nextSpoj.getCasOd())) {
-                this.spoje.add(i + 1, spoj);
-                return true;
-            }
-
-            if ((spoj.getCasOd() == currentSpoj.getCasDo()) && (spoj.getMiestoOd() == (currentSpoj.getMiestoDo()) && (spoj.getCasDo() == nextSpoj.getCasOd()) && (spoj.getMiestoDo() == nextSpoj.getMiestoOd()))) {
-                this.spoje.add(i + 1, spoj);
-                return true;
-            }
-
-            if (spoj.getCasOd() > currentSpoj.getCasDo() && spoj.getCasDo() < nextSpoj.getCasOd()) {
+            if ((currentSpoj.getCasDo() <= spoj.getCasOd()) && (maticaVzdialenosti[currentSpoj.getIndex()][spoj.getIndex()] <= (spoj.getCasOd() - currentSpoj.getCasDo())) && (spoj.getCasDo() <= nextSpoj.getCasOd()) && (maticaVzdialenosti[spoj.getIndex()][nextSpoj.getIndex()] <= (nextSpoj.getCasOd() - spoj.getCasDo()))) {
                 this.spoje.add(i + 1, spoj);
                 return true;
             }
         }
 
-        if (spoj.getCasOd() >= this.spoje.get(this.spoje.size() - 1).getCasDo()) {
+        if ((this.spoje.get(this.spoje.size() - 1).getCasDo() <= spoj.getCasOd()) && (maticaVzdialenosti[this.spoje.get(this.spoje.size() - 1).getIndex()][spoj.getIndex()] <= (spoj.getCasOd() - this.spoje.get(this.spoje.size() - 1).getCasDo()))) {
             this.spoje.add(spoj);
             return true;
         }
@@ -55,7 +47,7 @@ public class Turnus {
     public void vypis() {
         StringBuilder text = new StringBuilder("D - ");
         for (Spoj spoj:this.spoje) {
-            text.append(spoj.getId()).append(" - ");
+            text.append(spoj.getIndex()).append(" - ");
         }
         System.out.println(text + "D");
     }
