@@ -21,6 +21,11 @@ public class Turnus {
         }
 
         if (this.spoje.size() == 1) {
+            if ((this.spoje.get(0).getCasOd() >= spoj.getCasDo()) && (maticaVzdialenosti[spoj.getIndex()][this.spoje.get(0).getIndex()] <= (this.spoje.get(0).getCasOd() - spoj.getCasDo()))) {
+                this.spoje.add(0, spoj);
+                return true;
+            }
+
             if ((this.spoje.get(0).getCasDo() <= spoj.getCasOd()) && (maticaVzdialenosti[this.spoje.get(0).getIndex()][spoj.getIndex()] <= (spoj.getCasOd() - this.spoje.get(0).getCasDo()))) {
                 this.spoje.add(spoj);
                 return true;

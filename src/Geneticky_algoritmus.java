@@ -17,10 +17,9 @@ public class Geneticky_algoritmus {
         this.maticaVzdialenosti = maticaVzdialenosti;
         this.velkostPopulacie = velkostPopulacie;
         this.vytvorPociatocnuPopulaciu(this.velkostPopulacie);
-        for (Turnus turnus:this.dajNajlepsieRiesenie()) {
+        for (Turnus turnus : this.dajNajlepsieRiesenie()) {
             this.DNNR.pridajTurnus(turnus);
         }
-        this.DNNR.vypis();
     }
 
     public void vytvorPociatocnuPopulaciu(int velkostPopulacie) {
@@ -66,14 +65,15 @@ public class Geneticky_algoritmus {
 //            this.DNNR.vypis();
 
             this.naplnenieTopRieseniami(percentoTopRieseni);
-//            System.out.println("stara");
-//            for (Riesenie riesenie : this.staraPopulacia) {
-//                riesenie.vypis();
-//            }
-//            System.out.println("nova");
-//            for (Riesenie riesenie : this.novaPopulacia) {
-//                riesenie.vypis();
-//            }
+
+            System.out.println("stara");
+            for (Riesenie riesenie : this.staraPopulacia) {
+                riesenie.vypis();
+            }
+            System.out.println("nova");
+            for (Riesenie riesenie : this.novaPopulacia) {
+                riesenie.vypis();
+            }
             while (this.novaPopulacia.size() < this.velkostPopulacie) {
 //                System.out.println(this.staraPopulacia.size());
 //                System.out.println(this.novaPopulacia.size());
@@ -104,15 +104,17 @@ public class Geneticky_algoritmus {
                         this.aktualizujDNNR(potomok);
                         dosloKAktualizaciiDNNR = true;
                     }
-//                    System.out.println("Potomok pred vkladanim");
-//                    potomok.vypis();
+//                        System.out.println("Potomok pred vkladanim");
+//                        potomok.vypis();
                     this.novaPopulacia.add(potomok);
                 }
             }
-//            System.out.println("nova");
-//            for (Riesenie riesenie : this.novaPopulacia) {
-//                riesenie.vypis();
-//            }
+
+//                System.out.println("nova");
+//                for (Riesenie riesenie : this.novaPopulacia) {
+//                    riesenie.vypis();
+//                }
+
             this.nahradenieStarejNovou();
             iteracia++;
             if (dosloKAktualizaciiDNNR) {
@@ -153,10 +155,12 @@ public class Geneticky_algoritmus {
         for (int i = 0; i <= bodKrizeniaRodic1; i++) {
             potomok.pridajTurnus(this.staraPopulacia.get(poziciaRodica1).getTurnusy().get(i));
         }
-        int bodKrizeniaRodic2 = random.nextInt(0,this.staraPopulacia.get(poziciaRodica2).getTurnusy().size());
+        Random random2 = new Random();
+        int bodKrizeniaRodic2 = random2.nextInt(0,this.staraPopulacia.get(poziciaRodica2).getTurnusy().size());
         for (int i = bodKrizeniaRodic2; i < this.staraPopulacia.get(poziciaRodica2).getTurnusy().size(); i++) {
             potomok.pridajTurnus(this.staraPopulacia.get(poziciaRodica2).getTurnusy().get(i));
         }
+        potomok.vymazPrazdneTurnusy();
         return potomok;
     }
 
@@ -206,9 +210,6 @@ public class Geneticky_algoritmus {
             } while (potomok.getTurnusy().get(indexTurnusu).getSpoje().size() == 0);
             int indexSpoja = random.nextInt(0, potomok.getTurnusy().get(indexTurnusu).getSpoje().size());
             Spoj vybrany = potomok.getTurnusy().get(indexTurnusu).getSpoje().remove(indexSpoja);
-            if (potomok.getTurnusy().get(indexTurnusu).getSpoje().size() == 0) {
-                potomok.getTurnusy().remove(indexTurnusu);
-            }
             vybraneSpoje.add(vybrany);
         }
         Collections.shuffle(vybraneSpoje);
@@ -263,6 +264,7 @@ public class Geneticky_algoritmus {
 //        for (Riesenie riesenie:this.staraPopulacia) {
 //            riesenie.vypis();
 //        }
+
 //        System.out.println("nova");
 //        for (Riesenie riesenie:this.novaPopulacia) {
 //            riesenie.vypis();
@@ -279,10 +281,10 @@ public class Geneticky_algoritmus {
     private void naplnenieTopRieseniami(double percentoTopRieseni) {
         ArrayList<Riesenie> pomocnaPopulacia = new ArrayList<>(this.staraPopulacia);
         double pocet;
-        if (percentoTopRieseni > 0 && percentoTopRieseni <= 1) {
+        if (percentoTopRieseni >= 0 && percentoTopRieseni <= 1) {
             pocet = ((percentoTopRieseni * 100) * this.velkostPopulacie) / 100;
             pomocnaPopulacia.sort(Comparator.comparingDouble(Riesenie::getOhodnotenie));
-            for (int i = 0; i <= pocet; i++) {
+            for (int i = 0; i < pocet; i++) {
                 this.novaPopulacia.add(pomocnaPopulacia.get(i));
             }
         } else {
@@ -291,14 +293,19 @@ public class Geneticky_algoritmus {
     }
 
     private boolean jeLepsiAkoDNNR(Riesenie potomok) {
-        return (this.DNNR.getOhodnotenie() > potomok.getOhodnotenie());
+        return (potomok.getOhodnotenie() < this.DNNR.getOhodnotenie());
     }
 
     private void aktualizujDNNR(Riesenie potomok) {
+//        this.DNNR.vypis();
+//        potomok.vypis();
         if (this.DNNR.getTurnusy().size() > 0) {
             this.DNNR.getTurnusy().subList(0, this.DNNR.getTurnusy().size()).clear();
         }
         this.DNNR.getTurnusy().addAll(potomok.getTurnusy());
+        this.DNNR.vymazPrazdneTurnusy();
+//        this.DNNR.vypis();
+//        potomok.vypis();
     }
 
     public void vypisDNNR() {
