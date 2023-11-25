@@ -40,4 +40,18 @@ public class Riesenie {
         }
         return pocetSpojov;
     }
+
+    public void vymazPrazdneTurnusy() {
+        ArrayList<Integer> indexyNaVymazanie = new ArrayList<>();
+        for (int i = 0; i < this.turnusy.size(); i++) {
+            Turnus turnus = this.turnusy.get(i);
+            if (turnus.getSpoje().isEmpty()) {
+                indexyNaVymazanie.add(i);
+            }
+        }
+        for (int i = indexyNaVymazanie.size() - 1; i >= 0; i--) {
+            int indexNaVymazanie = indexyNaVymazanie.get(i);
+            this.turnusy.remove(indexNaVymazanie);
+        }
+    }
 }

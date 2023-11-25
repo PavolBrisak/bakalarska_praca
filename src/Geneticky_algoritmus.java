@@ -1,20 +1,19 @@
 package src;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Random;
+import java.util.*;
 
 public class Geneticky_algoritmus {
     private ArrayList<Riesenie> staraPopulacia = new ArrayList<>();
     private ArrayList<Riesenie> novaPopulacia = new ArrayList<>();
     private ArrayList<Spoj> spoje;
+    private ArrayList<Spoj> pomocneSpoje;
     private Riesenie DNNR = new Riesenie();
     private int velkostPopulacie;
     private int[][] maticaVzdialenosti;
 
     public Geneticky_algoritmus(ArrayList<Spoj> nacitaneSpoje, int[][] maticaVzdialenosti, int velkostPopulacie) {
         this.spoje = nacitaneSpoje;
+        this.pomocneSpoje.addAll(this.spoje);
         this.maticaVzdialenosti = maticaVzdialenosti;
         this.velkostPopulacie = velkostPopulacie;
         this.vytvorPociatocnuPopulaciu(velkostPopulacie);
@@ -67,7 +66,7 @@ public class Geneticky_algoritmus {
                         indexRodic2 = this.dajPoziciuRodica();
                     } while (indexRodic1 == indexRodic2);
                     Riesenie potomok = this.krizenie(indexRodic1, indexRodic2);
-                    //TODO opravit potomka po krizeni
+                    this.opravPotomka(potomok);
                     for (int i = 0; i < pocetMutacii; i++) {
                         if (Math.random() <= pravdepodobnostMutacie) {
                             this.mutacia(potomok);
@@ -93,22 +92,19 @@ public class Geneticky_algoritmus {
 
     public void novaPermutacia() {
         Random random = new Random();
-        int pocetVymen = random.nextInt(this.spoje.size()) + 1;
-        System.out.println("pocetVymen - " + pocetVymen);
+        int pocetVymen = random.nextInt(1, this.spoje.size() + 1);
         for (int i = 0; i < pocetVymen; i++) {
             int index1 = random.nextInt(this.spoje.size());
             int index2;
             do {
                 index2 = random.nextInt(this.spoje.size());
             } while (index2 == index1);
-            System.out.println("index1 - " + index1);
-            System.out.println("index2 - " + index2);
-
             Collections.swap(this.spoje, index1, index2);
         }
     }
 
     public void ohodnotRiesenie(Riesenie riesenie) {
+        //Pocet autobusov
         riesenie.setOhodnotenie(riesenie.getTurnusy().size());
     }
 
@@ -129,6 +125,41 @@ public class Geneticky_algoritmus {
             potomok.pridajTurnus(this.staraPopulacia.get(poziciaRodica2).getTurnusy().get(i));
         }
         return potomok;
+    }
+
+    private void opravPotomka(Riesenie potomok) {
+        int[] pocetOpakovani = new int[this.pomocneSpoje.size()];
+        Iterator<Turnus> iteratorTurnusy = potomok.getTurnusy().iterator();
+        while (iteratorTurnusy.hasNext()) {
+            Turnus turnus = iteratorTurnusy.next();
+            Iterator<Spoj> iteratorSpoje = turnus.getSpoje().iterator();
+            while (iteratorSpoje.hasNext()) {
+                Spoj spoj = iteratorSpoje.next();
+                if (pocetOpakovani[spoj.getIndex()] == 1) {
+                    iteratorSpoje.remove();
+                } else {
+                    pocetOpakovani[spoj.getIndex()]++;
+                }
+            }
+        }
+        for (int i = 0; i < pocetOpakovani.length; i++) {
+            if (pocetOpakovani[i] == 0) {
+                boolean pridany = false;
+                for (Turnus turnus : potomok.getTurnusy()) {
+                    if (turnus.pridalSa(this.pomocneSpoje.get(i), this.maticaVzdialenosti)) {
+                        pridany = true;
+                        break;
+                    }
+                }
+
+                if (!pridany) {
+                    Turnus novyTurnus = new Turnus();
+                    novyTurnus.pridajSpoj(this.pomocneSpoje.get(i));
+                    potomok.pridajTurnus(novyTurnus);
+                }
+            }
+        }
+        potomok.vymazPrazdneTurnusy();
     }
 
     private void mutacia(Riesenie potomok) {
