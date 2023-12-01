@@ -10,6 +10,10 @@ public class Turnus {
 
     }
 
+    public Turnus(Turnus turnus) {
+        this.spoje.addAll(turnus.getSpoje());
+    }
+
     public void pridajSpoj(Spoj spoj) {
         this.spoje.add(spoj);
     }

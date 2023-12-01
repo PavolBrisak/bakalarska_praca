@@ -10,7 +10,8 @@ public class Riesenie {
     }
 
     public void pridajTurnus(Turnus turnus) {
-        this.turnusy.add(turnus);
+        Turnus turnus1 = new Turnus(turnus);
+        this.turnusy.add(turnus1);
     }
 
     public ArrayList<Turnus> getTurnusy() {
