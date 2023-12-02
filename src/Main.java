@@ -11,7 +11,7 @@ public class Main {
         double[][] maticaSpotreby = scanner.nacitajMaticuSpotreby("input_data/Cij_DS1_J_1.csv");
 
         Geneticky_algoritmus GA = new Geneticky_algoritmus(nacitaneSpoje,maticaVzdialenosti, maticaSpotreby,nacitaneSpoje.size());
-        GA.genetickyAlgoritmus(100,100,0.9,5,0.7, 0.4);
+        GA.genetickyAlgoritmus(1000,700,0.9,5,0.7, 0.4);
         GA.vypisDNNR();
     }
 }

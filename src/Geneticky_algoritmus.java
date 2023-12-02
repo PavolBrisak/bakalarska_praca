@@ -125,22 +125,16 @@ public class Geneticky_algoritmus {
     }
 
     private int dajPoziciuRodica() {
-        double[] priehradky = new double[this.staraPopulacia.size()];
-        int index = 0;
         double sumaOhodnoteni = 0.0;
         for (Riesenie riesenie:this.staraPopulacia) {
             sumaOhodnoteni += riesenie.getOhodnotenie();
         }
-        for (Riesenie riesenie:this.staraPopulacia) {
-            priehradky[index] = riesenie.getOhodnotenie() / sumaOhodnoteni;
-            index++;
-        }
         double random = this.random.nextDouble();
         double pomocna = 0.0;
-        for (int i = 0; i < priehradky.length; i++) {
-            pomocna += priehradky[i];
+        for (Riesenie riesenie:this.staraPopulacia) {
+            pomocna += riesenie.getOhodnotenie() / sumaOhodnoteni;
             if (random < pomocna) {
-                return i;
+                return this.staraPopulacia.indexOf(riesenie);
             }
         }
         return 0;
