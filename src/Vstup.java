@@ -49,16 +49,41 @@ public class Vstup {
             String stlpce = br.readLine();
             pocetStlpcov = Integer.parseInt(stlpce);
 
-            int[][] matrix = new int[pocetRiadkov][pocetStlpcov];
+            int[][] matica = new int[pocetRiadkov][pocetStlpcov];
             for (int i = 0; i < pocetRiadkov; i++) {
                 String line = br.readLine();
                 String[] parts = line.split(";");
 
                 for (int j = 0; j < pocetStlpcov; j++) {
-                    matrix[i][j] = Integer.parseInt(parts[j]);
+                    matica[i][j] = Integer.parseInt(parts[j]);
                 }
             }
-            return matrix;
+            return matica;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public double[][] nacitajMaticuSpotreby(String nazovSuboru) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(nazovSuboru))) {
+            int pocetRiadkov;
+            int pocetStlpcov;
+            String riadky = br.readLine();
+            pocetRiadkov = Integer.parseInt(riadky);
+            String stlpce = br.readLine();
+            pocetStlpcov = Integer.parseInt(stlpce);
+
+            double[][] matica = new double[pocetRiadkov][pocetStlpcov];
+            for (int i = 0; i < pocetRiadkov; i++) {
+                String line = br.readLine();
+                String[] parts = line.split(";");
+
+                for (int j = 0; j < pocetStlpcov; j++) {
+                    matica[i][j] = Double.parseDouble(parts[j]);
+                }
+            }
+            return matica;
         } catch (IOException e) {
             e.printStackTrace();
         }

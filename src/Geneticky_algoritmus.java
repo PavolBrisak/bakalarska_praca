@@ -12,11 +12,13 @@ public class Geneticky_algoritmus {
     private Random random = new Random();
     private int velkostPopulacie;
     private int[][] maticaVzdialenosti;
+    private double[][] maticaSpotreby;
 
-    public Geneticky_algoritmus(ArrayList<Spoj> nacitaneSpoje, int[][] maticaVzdialenosti, int velkostPopulacie) {
+    public Geneticky_algoritmus(ArrayList<Spoj> nacitaneSpoje, int[][] maticaVzdialenosti, double[][] maticaSpotreby, int velkostPopulacie) {
         this.spoje = nacitaneSpoje;
         this.pomocneSpoje.addAll(this.spoje);
         this.maticaVzdialenosti = maticaVzdialenosti;
+        this.maticaSpotreby = maticaSpotreby;
         this.velkostPopulacie = velkostPopulacie;
         this.vytvorPociatocnuPopulaciu(this.velkostPopulacie);
         for (Turnus turnus : this.dajNajlepsieRiesenie()) {
@@ -115,12 +117,33 @@ public class Geneticky_algoritmus {
     }
 
     public void ohodnotRiesenie(Riesenie riesenie) {
-        //Pocet autobusov
+        //(pocet autobusov * vaha) + suma(spotreba)
+        int vaha = 100;
+        double ohodnotenie = 0.0;
+
         riesenie.setOhodnotenie(riesenie.getTurnusy().size());
     }
 
     private int dajPoziciuRodica() {
-        return this.random.nextInt(0, this.staraPopulacia.size());
+        double[] priehradky = new double[this.staraPopulacia.size()];
+        int index = 0;
+        double sumaOhodnoteni = 0.0;
+        for (Riesenie riesenie:this.staraPopulacia) {
+            sumaOhodnoteni += riesenie.getOhodnotenie();
+        }
+        for (Riesenie riesenie:this.staraPopulacia) {
+            priehradky[index] = riesenie.getOhodnotenie() / sumaOhodnoteni;
+            index++;
+        }
+        double random = this.random.nextDouble();
+        double pomocna = 0.0;
+        for (int i = 0; i < priehradky.length; i++) {
+            pomocna += priehradky[i];
+            if (random < pomocna) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     private void krizenie(int poziciaRodica1, int poziciaRodica2, Riesenie potomok) {
