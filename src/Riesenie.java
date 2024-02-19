@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Riesenie {
     private final ArrayList<Turnus> turnusy = new ArrayList<>();
-    private int ohodnotenie;
+    private double ohodnotenie;
     private int pocetVozidiel;
 
     public Riesenie() {
@@ -19,15 +19,17 @@ public class Riesenie {
         return this.turnusy;
     }
 
-    public int getOhodnotenie() {
-        return ohodnotenie;
+    public double getOhodnotenie() {
+        return this.ohodnotenie;
     }
 
-    public void setOhodnotenie(int ohodnotenie) {
+    public void setOhodnotenie(double ohodnotenie) {
         this.ohodnotenie = ohodnotenie;
     }
 
     public void vypis() {
+        System.out.println("Počet vozidiel: " + this.pocetVozidiel);
+        System.out.println("Ohodnotenie: " + this.ohodnotenie);
         System.out.println("*************************");
         for (Turnus turnus:this.turnusy) {
             turnus.vypis();

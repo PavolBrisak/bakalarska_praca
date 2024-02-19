@@ -10,8 +10,8 @@ public class MetodaSupra {
     private double[][] maticaSpotreby;
     int N = 100;
     ArrayList<Double> DNNR = new ArrayList<>();
-    int ohodnotenieDNNR;
-    int novenohodnotenieDNNR;
+    double ohodnotenieDNNR;
+    double novenohodnotenieDNNR;
     private Random rand = new Random();
     ArrayList<Double> r = new ArrayList<>();
     double W = 0.0;

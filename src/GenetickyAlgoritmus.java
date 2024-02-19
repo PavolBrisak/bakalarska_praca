@@ -117,12 +117,30 @@ public class GenetickyAlgoritmus {
     }
 
     public void ohodnotRiesenie(Riesenie riesenie) {
+        riesenie.setPocetVozidiel(riesenie.getTurnusy().size());
+
         //(pocet autobusov * vaha) + suma(spotreba)
         int vaha = 100;
         double ohodnotenie = 0.0;
 
-        riesenie.setOhodnotenie();
-        riesenie.setPocetVozidiel(riesenie.getTurnusy().size());
+        ohodnotenie += riesenie.getPocetVozidiel() * vaha;
+
+        for (Turnus turnus : riesenie.getTurnusy()) {
+            double spotreba = 0.0;
+            for (int i = 0; i < turnus.getSpoje().size() - 1; i++) {
+                spotreba += this.maticaSpotreby[turnus.getSpoje().get(i).getIndex()][turnus.getSpoje().get(i + 1).getIndex()];
+            }
+
+            //spotreba Depo - prvy spoj
+            spotreba += this.maticaSpotreby[0][turnus.getSpoje().get(0).getIndex()];
+
+            //spotreba posledny spoj - Depo
+            spotreba += this.maticaSpotreby[turnus.getSpoje().get(turnus.getSpoje().size() - 1).getIndex()][0];
+
+            ohodnotenie += spotreba;
+        }
+
+        riesenie.setOhodnotenie(ohodnotenie);
     }
 
     private int dajPoziciuRodica() {
@@ -162,10 +180,10 @@ public class GenetickyAlgoritmus {
             Iterator<Spoj> iteratorSpoje = turnus.getSpoje().iterator();
             while (iteratorSpoje.hasNext()) {
                 Spoj spoj = iteratorSpoje.next();
-                if (pocetOpakovani[spoj.getIndex()] == 1) {
+                if (pocetOpakovani[spoj.getIndex() - 1] == 1) {
                     iteratorSpoje.remove();
                 } else {
-                    pocetOpakovani[spoj.getIndex()]++;
+                    pocetOpakovani[spoj.getIndex() - 1]++;
                 }
             }
         }
@@ -274,15 +292,11 @@ public class GenetickyAlgoritmus {
         this.ohodnotRiesenie(this.DNNR);
     }
 
-    public int dajOhodnotenieDNNR() {
+    public double dajOhodnotenieDNNR() {
         return this.DNNR.getOhodnotenie();
     }
 
     public void vypisDNNR() {
         this.DNNR.vypis();
-    }
-
-    public void vypisPocetVozidielDNNR() {
-        System.out.println("Počet vozidiel: " + this.DNNR.getPocetVozidiel());
     }
 }
