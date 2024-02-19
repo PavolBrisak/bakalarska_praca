@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Riesenie {
     private final ArrayList<Turnus> turnusy = new ArrayList<>();
     private int ohodnotenie;
+    private int pocetVozidiel;
 
     public Riesenie() {
     }
@@ -54,5 +55,13 @@ public class Riesenie {
             int indexNaVymazanie = indexyNaVymazanie.get(i);
             this.turnusy.remove(indexNaVymazanie);
         }
+    }
+
+    public int getPocetVozidiel() {
+        return this.pocetVozidiel;
+    }
+
+    public void setPocetVozidiel(int pocetVozidiel) {
+        this.pocetVozidiel = pocetVozidiel;
     }
 }

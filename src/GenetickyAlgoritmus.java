@@ -23,6 +23,7 @@ public class GenetickyAlgoritmus {
         for (Turnus turnus : this.dajNajlepsieRiesenie()) {
             this.DNNR.pridajTurnus(turnus);
         }
+        this.ohodnotRiesenie(this.DNNR);
     }
 
     public void vytvorPociatocnuPopulaciu(int velkostPopulacie) {
@@ -120,7 +121,8 @@ public class GenetickyAlgoritmus {
         int vaha = 100;
         double ohodnotenie = 0.0;
 
-        riesenie.setOhodnotenie(riesenie.getTurnusy().size());
+        riesenie.setOhodnotenie();
+        riesenie.setPocetVozidiel(riesenie.getTurnusy().size());
     }
 
     private int dajPoziciuRodica() {
@@ -185,6 +187,7 @@ public class GenetickyAlgoritmus {
             }
         }
         potomok.vymazPrazdneTurnusy();
+        this.ohodnotRiesenie(potomok);
     }
 
     private void mutacia(Riesenie potomok) {
@@ -268,6 +271,11 @@ public class GenetickyAlgoritmus {
         }
         this.DNNR.getTurnusy().addAll(potomok.getTurnusy());
         this.DNNR.vymazPrazdneTurnusy();
+        this.ohodnotRiesenie(this.DNNR);
+    }
+
+    public int dajOhodnotenieDNNR() {
+        return this.DNNR.getOhodnotenie();
     }
 
     public void vypisDNNR() {
@@ -275,6 +283,6 @@ public class GenetickyAlgoritmus {
     }
 
     public void vypisPocetVozidielDNNR() {
-        System.out.println("Počet vozidiel: " + this.DNNR.getTurnusy().size());
+        System.out.println("Počet vozidiel: " + this.DNNR.getPocetVozidiel());
     }
 }
