@@ -14,6 +14,7 @@ public class Vstup {
     public ArrayList<Spoj> nacitajSpoje(String nazovSuboru) throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(nazovSuboru))) {
             br.readLine();
+//            br.readLine();
             String line = br.readLine();
             while (line != null) {
                 String[] parts = line.split(";");
@@ -49,6 +50,10 @@ public class Vstup {
             String stlpce = br.readLine();
             pocetStlpcov = Integer.parseInt(stlpce);
 
+//            pocetRiadkov--;
+//            pocetStlpcov--;
+//            br.readLine();
+
             int[][] matica = new int[pocetRiadkov][pocetStlpcov];
             for (int i = 0; i < pocetRiadkov; i++) {
                 String line = br.readLine();
@@ -73,6 +78,10 @@ public class Vstup {
             pocetRiadkov = Integer.parseInt(riadky);
             String stlpce = br.readLine();
             pocetStlpcov = Integer.parseInt(stlpce);
+
+//            pocetRiadkov--;
+//            pocetStlpcov--;
+//            br.readLine();
 
             double[][] matica = new double[pocetRiadkov][pocetStlpcov];
             for (int i = 0; i < pocetRiadkov; i++) {

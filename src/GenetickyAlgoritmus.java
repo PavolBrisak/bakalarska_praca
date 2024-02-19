@@ -1,9 +1,8 @@
 package src;
 
-import java.security.SecureRandom;
 import java.util.*;
 
-public class Geneticky_algoritmus {
+public class GenetickyAlgoritmus {
     private ArrayList<Riesenie> staraPopulacia = new ArrayList<>();
     private ArrayList<Riesenie> novaPopulacia = new ArrayList<>();
     private ArrayList<Spoj> spoje;
@@ -14,8 +13,8 @@ public class Geneticky_algoritmus {
     private int[][] maticaVzdialenosti;
     private double[][] maticaSpotreby;
 
-    public Geneticky_algoritmus(ArrayList<Spoj> nacitaneSpoje, int[][] maticaVzdialenosti, double[][] maticaSpotreby, int velkostPopulacie) {
-        this.spoje = nacitaneSpoje;
+    public GenetickyAlgoritmus(ArrayList<Spoj> nacitaneSpoje, int[][] maticaVzdialenosti, double[][] maticaSpotreby, int velkostPopulacie) {
+        this.spoje = new ArrayList<>(nacitaneSpoje);
         this.pomocneSpoje.addAll(this.spoje);
         this.maticaVzdialenosti = maticaVzdialenosti;
         this.maticaSpotreby = maticaSpotreby;
@@ -56,19 +55,19 @@ public class Geneticky_algoritmus {
         }
     }
 
-    public void genetickyAlgoritmus(int pocetIteracii, int pocetNeaktualizovaniaDNNR, double pravdepodobnostKrizenia, int pocetMutacii, double pravdepodobnostMutacie, double percentoTopRieseni) {
+    public void genetickyAlgoritmus(double pocetIteracii, double pocetNeaktualizovaniaDNNR, double pravdepodobnostKrizenia, double pocetMutacii, double pravdepodobnostMutacie, double percentoTopRieseni) {
         int iteracia = 1;
         int neaktualizovaneDNNR = 0;
         while ((iteracia <= pocetIteracii) && (neaktualizovaneDNNR < pocetNeaktualizovaniaDNNR)) {
             boolean dosloKAktualizaciiDNNR = false;
-            System.out.println("iteracia - " + iteracia);
-            System.out.println("neaktulanizovaneDNNR - " + neaktualizovaneDNNR);
+//            System.out.println("iteracia - " + iteracia);
+//            System.out.println("neaktulanizovaneDNNR - " + neaktualizovaneDNNR);
             this.naplnenieTopRieseniami(percentoTopRieseni);
             while (this.novaPopulacia.size() < this.velkostPopulacie) {
-                System.out.println("iteracia - " + iteracia);
-                System.out.println("neaktulanizovaneDNNR - " + neaktualizovaneDNNR);
-                System.out.println(this.staraPopulacia.size());
-                System.out.println(this.novaPopulacia.size());
+//                System.out.println("iteracia - " + iteracia);
+//                System.out.println("neaktulanizovaneDNNR - " + neaktualizovaneDNNR);
+//                System.out.println(this.staraPopulacia.size());
+//                System.out.println(this.novaPopulacia.size());
 
                 if (Math.random() <= pravdepodobnostKrizenia) {
                     int indexRodic1 = this.dajPoziciuRodica();
@@ -273,5 +272,9 @@ public class Geneticky_algoritmus {
 
     public void vypisDNNR() {
         this.DNNR.vypis();
+    }
+
+    public void vypisPocetVozidielDNNR() {
+        System.out.println("Počet vozidiel: " + this.DNNR.getTurnusy().size());
     }
 }
