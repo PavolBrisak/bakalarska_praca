@@ -5,15 +5,18 @@ import java.util.*;
 public class GenetickyAlgoritmus {
     private ArrayList<Riesenie> staraPopulacia = new ArrayList<>();
     private ArrayList<Riesenie> novaPopulacia = new ArrayList<>();
+    private ArrayList<Spoj> nacitaneSpoje;
     private ArrayList<Spoj> spoje;
     private ArrayList<Spoj> pomocneSpoje = new ArrayList<>();
     private Riesenie DNNR = new Riesenie();
     private Random random = new Random();
-    private int velkostPopulacie;
+    private double velkostPopulacie;
     private int[][] maticaVzdialenosti;
     private double[][] maticaSpotreby;
+    int vahaVozidla = 100;
 
-    public GenetickyAlgoritmus(ArrayList<Spoj> nacitaneSpoje, int[][] maticaVzdialenosti, double[][] maticaSpotreby, int velkostPopulacie) {
+    public GenetickyAlgoritmus(ArrayList<Spoj> nacitaneSpoje, int[][] maticaVzdialenosti, double[][] maticaSpotreby, double velkostPopulacie) {
+        this.nacitaneSpoje = new ArrayList<>(nacitaneSpoje);
         this.spoje = new ArrayList<>(nacitaneSpoje);
         this.pomocneSpoje.addAll(this.spoje);
         this.maticaVzdialenosti = maticaVzdialenosti;
@@ -26,7 +29,8 @@ public class GenetickyAlgoritmus {
         this.ohodnotRiesenie(this.DNNR);
     }
 
-    public void vytvorPociatocnuPopulaciu(int velkostPopulacie) {
+    private void vytvorPociatocnuPopulaciu(double velkostPopulacie) {
+        Collections.shuffle(this.spoje);
         for (int i = 0; i < velkostPopulacie; i++) {
             Riesenie noveRiesenie = new Riesenie();
             for (Spoj spoj : this.spoje) {
@@ -104,7 +108,7 @@ public class GenetickyAlgoritmus {
         }
     }
 
-    public void novaPermutacia() {
+    private void novaPermutacia() {
         int pocetVymen = this.random.nextInt(1, this.spoje.size() + 1);
         for (int i = 0; i < pocetVymen; i++) {
             int index1 = this.random.nextInt(this.spoje.size());
@@ -116,19 +120,19 @@ public class GenetickyAlgoritmus {
         }
     }
 
-    public void ohodnotRiesenie(Riesenie riesenie) {
+    private void ohodnotRiesenie(Riesenie riesenie) {
         riesenie.setPocetVozidiel(riesenie.getTurnusy().size());
 
         //(pocet autobusov * vaha) + suma(spotreba)
-        int vaha = 100;
         double ohodnotenie = 0.0;
 
-        ohodnotenie += riesenie.getPocetVozidiel() * vaha;
+        ohodnotenie += riesenie.getPocetVozidiel() * this.vahaVozidla;
 
         for (Turnus turnus : riesenie.getTurnusy()) {
             double spotreba = 0.0;
             for (int i = 0; i < turnus.getSpoje().size() - 1; i++) {
                 spotreba += this.maticaSpotreby[turnus.getSpoje().get(i).getIndex()][turnus.getSpoje().get(i + 1).getIndex()];
+                spotreba += this.nacitaneSpoje.get(turnus.getSpoje().get(i).getIndex()).getSpotreba();
             }
 
             //spotreba Depo - prvy spoj
@@ -298,5 +302,9 @@ public class GenetickyAlgoritmus {
 
     public void vypisDNNR() {
         this.DNNR.vypis();
+    }
+
+    public Riesenie getDNNR() {
+        return this.DNNR;
     }
 }

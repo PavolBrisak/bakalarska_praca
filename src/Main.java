@@ -11,12 +11,15 @@ public class Main {
         double[][] maticaSpotreby = scanner.nacitajMaticuSpotreby("input_data/Cij_DS1_J_1.csv");
         nacitaneSpoje.remove(0);
 
-        GenetickyAlgoritmus GA = new GenetickyAlgoritmus(nacitaneSpoje, maticaVzdialenosti, maticaSpotreby, nacitaneSpoje.size());
-        GA.genetickyAlgoritmus(1000.0, 700.0, 0.9, 5.0, 0.7, 0.4);
-        GA.vypisDNNR();
+//        for (int i = 0; i < 25; i++) {
+//            GenetickyAlgoritmus GA = new GenetickyAlgoritmus(nacitaneSpoje, maticaVzdialenosti, maticaSpotreby, 25.0);
+//            GA.genetickyAlgoritmus(2000.0, 1800.0, 0.9, 10.0, 0.9, 0.1);
+//            GA.vypisDNNR();
 
-//        MetodaSupra metodaSupra = new MetodaSupra(nacitaneSpoje, maticaVzdialenosti, maticaSpotreby, nacitaneSpoje.size());
-//        metodaSupra.metodaSupra();
+
+        MetodaSupra metodaSupra = new MetodaSupra(nacitaneSpoje, maticaVzdialenosti, maticaSpotreby);
+        metodaSupra.metodaSupra(10, 0.4, 0.0009, 35);
+        metodaSupra.vypisDNNR();
 
     }
 }

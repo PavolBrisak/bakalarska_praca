@@ -10,6 +10,12 @@ public class Riesenie {
     public Riesenie() {
     }
 
+    public Riesenie(Riesenie riesenie) {
+        this.turnusy.addAll(riesenie.getTurnusy());
+        this.ohodnotenie = riesenie.getOhodnotenie();
+        this.pocetVozidiel = riesenie.getPocetVozidiel();
+    }
+
     public void pridajTurnus(Turnus turnus) {
         Turnus turnus1 = new Turnus(turnus);
         this.turnusy.add(turnus1);
