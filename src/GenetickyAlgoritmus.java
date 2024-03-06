@@ -1,5 +1,6 @@
 package src;
 
+import java.sql.Time;
 import java.util.*;
 
 public class GenetickyAlgoritmus {
@@ -60,19 +61,16 @@ public class GenetickyAlgoritmus {
         }
     }
 
-    public void genetickyAlgoritmus(double pocetIteracii, double pocetNeaktualizovaniaDNNR, double pravdepodobnostKrizenia, double pocetMutacii, double pravdepodobnostMutacie, double percentoTopRieseni) {
-        int iteracia = 1;
+    public void genetickyAlgoritmus(double pocetMinut, double pocetNeaktualizovaniaDNNR, double pravdepodobnostKrizenia, double pocetMutacii, double pravdepodobnostMutacie, double percentoTopRieseni) {
+        long start = System.currentTimeMillis();
         int neaktualizovaneDNNR = 0;
-        while ((iteracia <= pocetIteracii) && (neaktualizovaneDNNR < pocetNeaktualizovaniaDNNR)) {
+        System.out.println("Počet minút: " + pocetMinut);
+        System.out.println("Start: " + start);
+        System.out.println("Počet neaktualizovania DNNR: " + pocetNeaktualizovaniaDNNR);
+        while ((((double)(System.currentTimeMillis() - start) / 60000) < pocetMinut) && (neaktualizovaneDNNR < pocetNeaktualizovaniaDNNR)) {
             boolean dosloKAktualizaciiDNNR = false;
-//            System.out.println("iteracia - " + iteracia);
-//            System.out.println("neaktulanizovaneDNNR - " + neaktualizovaneDNNR);
             this.naplnenieTopRieseniami(percentoTopRieseni);
             while (this.novaPopulacia.size() < this.velkostPopulacie) {
-//                System.out.println("iteracia - " + iteracia);
-//                System.out.println("neaktulanizovaneDNNR - " + neaktualizovaneDNNR);
-//                System.out.println(this.staraPopulacia.size());
-//                System.out.println(this.novaPopulacia.size());
 
                 if (Math.random() <= pravdepodobnostKrizenia) {
                     int indexRodic1 = this.dajPoziciuRodica();
@@ -96,16 +94,17 @@ public class GenetickyAlgoritmus {
                     }
                     this.novaPopulacia.add(potomok);
                 }
-
             }
             this.nahradenieStarejNovou();
-            iteracia++;
             if (dosloKAktualizaciiDNNR) {
                 neaktualizovaneDNNR = 0;
             } else {
                 neaktualizovaneDNNR++;
             }
         }
+        System.out.println("Počet neaktualizovania DNNR: " + neaktualizovaneDNNR);
+        System.out.println("Koniec: " + System.currentTimeMillis());
+        System.out.println("Trvanie: " + ((double)(System.currentTimeMillis() - start) / 60000) + " minút");
     }
 
     private void novaPermutacia() {
@@ -123,7 +122,7 @@ public class GenetickyAlgoritmus {
     private void ohodnotRiesenie(Riesenie riesenie) {
         riesenie.setPocetVozidiel(riesenie.getTurnusy().size());
 
-        //(pocet autobusov * vaha) + suma(spotreba)
+        //(pocet autobusov * vaha) + suma(spotreba) z matice spotreby
         double ohodnotenie = 0.0;
 
         ohodnotenie += riesenie.getPocetVozidiel() * this.vahaVozidla;
@@ -132,14 +131,13 @@ public class GenetickyAlgoritmus {
             double spotreba = 0.0;
             for (int i = 0; i < turnus.getSpoje().size() - 1; i++) {
                 spotreba += this.maticaSpotreby[turnus.getSpoje().get(i).getIndex()][turnus.getSpoje().get(i + 1).getIndex()];
-                spotreba += this.nacitaneSpoje.get(turnus.getSpoje().get(i).getIndex()).getSpotreba();
             }
 
             //spotreba Depo - prvy spoj
             spotreba += this.maticaSpotreby[0][turnus.getSpoje().get(0).getIndex()];
 
             //spotreba posledny spoj - Depo
-            spotreba += this.maticaSpotreby[turnus.getSpoje().get(turnus.getSpoje().size() - 1).getIndex()][0];
+            spotreba += this.maticaSpotreby[turnus.getSpoje().get(turnus.getSpoje().size() - 1).getIndex()][this.nacitaneSpoje.size() + 1];
 
             ohodnotenie += spotreba;
         }

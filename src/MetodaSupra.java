@@ -1,81 +1,41 @@
 package src;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
 public class MetodaSupra {
+    private ArrayList<Double> pociatocneParametre = new ArrayList<>(List.of(5.0, 500.0, 1.0, 10.0, 0.5, 0.1, 150.0));
     private ArrayList<Spoj> spoje;
-    private ArrayList<Double> pociatocneParametre = new ArrayList<>();
     private int[][] maticaVzdialenosti;
     private double[][] maticaSpotreby;
     private ArrayList<Double> DNNR = new ArrayList<>();
     private Riesenie DNNRriesenie = new Riesenie();
     private double ohodnotenieDNNR;
-    private double novenohodnotenieDNNR;
-    private Random rand = new Random();
+    private double noveOhodnotenieDNNR;
     private double[] r;
-    private double hornaHranicaPocetIteracii = 1500;
+    private double[] W;
+    private double hornaHranicaPocetMinut = 5;
     private double hornaHranicaPocetMutacii = 100;
     private double hornaHranicaVelkostPopulacie = 1000;
     private double dolnaHranicaVelkostPopulacie = 2;
+    private double hornaHranicaPocetNeaktualizovaniaDNNR = 1000;
 
     MetodaSupra(ArrayList<Spoj> nacitaneSpoje, int[][] maticaVzdialenosti, double[][] maticaSpotreby) {
         this.spoje = new ArrayList<>(nacitaneSpoje);
         this.maticaVzdialenosti = maticaVzdialenosti;
         this.maticaSpotreby = maticaSpotreby;
 
-        this.nastavPociatocneParametre();
-        System.out.println("Pociatocne parametre");
-        for (Double d : this.pociatocneParametre) {
-            System.out.println(d);
-        }
-
-        GenetickyAlgoritmus GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, this.pociatocneParametre.get(6).intValue());
+        GenetickyAlgoritmus GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, this.pociatocneParametre.get(6));
         GA.genetickyAlgoritmus(this.pociatocneParametre.get(0), this.pociatocneParametre.get(1), this.pociatocneParametre.get(2), this.pociatocneParametre.get(3), this.pociatocneParametre.get(4), this.pociatocneParametre.get(5));
         this.ohodnotenieDNNR = GA.dajOhodnotenieDNNR();
-        GA.vypisDNNR();
-        System.out.println("Ohodnotenie DNNR: " + this.ohodnotenieDNNR);
 
         this.DNNR.addAll(this.pociatocneParametre);
-        System.out.println("DNNR");
-        for (Double d : this.DNNR) {
-            System.out.println(d);
-        }
 
         this.r = new double[this.pociatocneParametre.size()];
+        this.W = new double[this.pociatocneParametre.size()];
     }
 
-    private void nastavPociatocneParametre() {
-        //pocetIteracii
-        int pocetIteracii = (int) (Math.random() * this.hornaHranicaPocetIteracii + 1);
-        this.pociatocneParametre.add((double) pocetIteracii);
-
-        //pocetNeaktualizovaniaDNNR
-        int pocetNeaktualizovaniaDNNR = (int) (Math.random() * pocetIteracii + 1);
-        this.pociatocneParametre.add((double) pocetNeaktualizovaniaDNNR);
-
-        //pravdepodobnostKrizenia
-        double pravdepodobnostKrizenia = Math.random();
-        this.pociatocneParametre.add(pravdepodobnostKrizenia);
-
-        //pocetMutacii
-        int pocetMutacii = (int) (Math.random() * this.hornaHranicaPocetMutacii + 1);
-        this.pociatocneParametre.add((double) pocetMutacii);
-
-        //pravdepodobnostMutacie
-        double pravdepodobnostMutacie = Math.random();
-        this.pociatocneParametre.add(pravdepodobnostMutacie);
-
-        //percentoTopRieseni
-        double percentoTopRieseni = Math.random();
-        this.pociatocneParametre.add(percentoTopRieseni);
-
-        //velkostPopulacie
-        double velkostPopulacie = (int) (Math.random() * (this.hornaHranicaVelkostPopulacie - this.dolnaHranicaVelkostPopulacie + 1) + this.dolnaHranicaVelkostPopulacie);
-        this.pociatocneParametre.add(velkostPopulacie);
-    }
-
-    public void metodaSupra(int pocetKrokov, double parameterZabudania, double intenzitaUcenia, int max_s) {
+    public void metodaSupra(int pocetKrokov, double parameterZabudania, double intenzitaUcenia, int max_s, double okolieAplha) {
         double[] pk = new double[this.pociatocneParametre.size()];
 
         for (int i = 0; i < pk.length; i++) {
@@ -85,21 +45,19 @@ public class MetodaSupra {
         for (int krok = 0; krok < pocetKrokov; krok++) {
             System.out.println("Krok: " + krok);
 
-            double[] W = new double[this.pociatocneParametre.size()];
-
             // 1. faza
             int j = 0;
 
             while (j < max_s) {
                 // náhodný vektor x
                 double[] x = new double[this.pociatocneParametre.size()];
-                double[] nahodneParametre = this.dajNahodneParametre();
+                double[] nahodneParametre = this.dajNahodneParametreVOkoliAlpha(okolieAplha, pk);
                 System.arraycopy(nahodneParametre, 0, x, 0, x.length);
 
                 // vektor rj podľa vzťahu rj = w + x
                 double[] rj = new double[this.pociatocneParametre.size()];
                 for (int i = 0; i < rj.length; i++) {
-                    rj[i] = W[i] + x[i];
+                    rj[i] = this.W[i] + x[i];
                 }
 
                 this.skontrolujParametre(rj);
@@ -114,12 +72,10 @@ public class MetodaSupra {
 
                 GenetickyAlgoritmus GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, pkj[6]);
                 GA.genetickyAlgoritmus(pkj[0], pkj[1], pkj[2], pkj[3], pkj[4], pkj[5]);
-                this.novenohodnotenieDNNR = GA.dajOhodnotenieDNNR();
-//                System.out.println("nove ohodnotenie: " + this.novenohodnotenieDNNR);
-//                System.out.println("stare ohodnotenie: " + this.ohodnotenieDNNR);
+                this.noveOhodnotenieDNNR = GA.dajOhodnotenieDNNR();
 
-                if (this.novenohodnotenieDNNR < this.ohodnotenieDNNR) {
-                    this.ohodnotenieDNNR = this.novenohodnotenieDNNR;
+                if (this.noveOhodnotenieDNNR < this.ohodnotenieDNNR) {
+                    this.ohodnotenieDNNR = this.noveOhodnotenieDNNR;
                     for (int i = 0; i < pkj.length; i++) {
                         this.DNNR.set(i, pkj[i]);
                     }
@@ -130,8 +86,7 @@ public class MetodaSupra {
 
                 //aktualizuj hodnoty r a w
                 this.upravR(pkj, pk);
-                this.upravW(W, parameterZabudania, intenzitaUcenia, pkj, pk);
-
+                this.upravW(this.W, parameterZabudania, intenzitaUcenia, pkj, pk);
 
                 j++;
             }
@@ -140,8 +95,8 @@ public class MetodaSupra {
             int pocetAb = 0; //pocet krokov od posledneho zlepsenia hodnoty riesenia
             int maxPocetAb = 100;
             double alpha = 1;
-            double minAlpha = 0.00001;
-            double normaVektoraR = this.normaVektoraR();
+            double minAlpha = 0.05;
+            double normaVektoraR = this.normaVektora(this.r);
 
             while (pocetAb < maxPocetAb && alpha >= minAlpha) {
                 // vypocitaj novy bod p
@@ -154,12 +109,10 @@ public class MetodaSupra {
 
                 GenetickyAlgoritmus GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, p[6]);
                 GA.genetickyAlgoritmus(p[0], p[1], p[2], p[3], p[4], p[5]);
-                this.novenohodnotenieDNNR = GA.dajOhodnotenieDNNR();
-//                System.out.println("nove ohodnotenie: " + this.novenohodnotenieDNNR);
-//                System.out.println("stare ohodnotenie: " + this.ohodnotenieDNNR);
+                this.noveOhodnotenieDNNR = GA.dajOhodnotenieDNNR();
 
-                if (this.novenohodnotenieDNNR < this.ohodnotenieDNNR) {
-                    this.ohodnotenieDNNR = this.novenohodnotenieDNNR;
+                if (this.noveOhodnotenieDNNR < this.ohodnotenieDNNR) {
+                    this.ohodnotenieDNNR = this.noveOhodnotenieDNNR;
                     for (int i = 0; i < p.length; i++) {
                         this.DNNR.set(i, p[i]);
                     }
@@ -181,115 +134,131 @@ public class MetodaSupra {
         }
     }
 
-    private void skontrolujParametre(double[] rj) {
-        for (int i = 0; i < rj.length; i++) {
+    private void skontrolujParametre(double[] vektor) {
+        for (int i = 0; i < vektor.length; i++) {
             if (i == 0) {
-                if (rj[i] < 0) {
-                    rj[i] = 0.0;
-                } else if (rj[i] > this.hornaHranicaPocetIteracii) {
-                    rj[i] = this.hornaHranicaPocetIteracii;
+                if (vektor[i] < 0) {
+                    vektor[i] = 0.0;
+                } else if (vektor[i] > this.hornaHranicaPocetMinut) {
+                    vektor[i] = this.hornaHranicaPocetMinut;
                 }
-                rj[i] = Math.round(rj[i]);
+                vektor[i] = Math.round(vektor[i]);
             } else if (i == 1) {
-                if (rj[i] < 0) {
-                    rj[i] = 0.0;
-                } else if (rj[i] > rj[0]) {
-                    rj[i] = rj[0];
+                if (vektor[i] < 0) {
+                    vektor[i] = 0.0;
+                } else if (vektor[i] > this.hornaHranicaPocetNeaktualizovaniaDNNR) {
+                    vektor[i] = this.hornaHranicaPocetNeaktualizovaniaDNNR;
                 }
-                rj[i] = Math.round(rj[i]);
+                vektor[i] = Math.round(vektor[i]);
             } else if (i == 2) {
-                if (rj[i] < 0) {
-                    rj[i] = 0.0;
-                } else if (rj[i] > 1) {
-                    rj[i] = 1.0;
+                if (vektor[i] < 0) {
+                    vektor[i] = 0.0;
+                } else if (vektor[i] > 1) {
+                    vektor[i] = 1.0;
                 }
             } else if (i == 3) {
-                if (rj[i] < 0) {
-                    rj[i] = 0.0;
-                } else if (rj[i] > this.hornaHranicaPocetMutacii) {
-                    rj[i] = this.hornaHranicaPocetMutacii;
+                if (vektor[i] < 0) {
+                    vektor[i] = 0.0;
+                } else if (vektor[i] > this.hornaHranicaPocetMutacii) {
+                    vektor[i] = this.hornaHranicaPocetMutacii;
                 }
-                rj[i] = Math.round(rj[i]);
+                vektor[i] = Math.round(vektor[i]);
             } else if (i == 4) {
-                if (rj[i] < 0) {
-                    rj[i] = 0.0;
-                } else if (rj[i] > 1) {
-                    rj[i] = 1.0;
+                if (vektor[i] < 0) {
+                    vektor[i] = 0.0;
+                } else if (vektor[i] > 1) {
+                    vektor[i] = 1.0;
                 }
             } else if (i == 5) {
-                if (rj[i] < 0) {
-                    rj[i] = 0.0;
-                } else if (rj[i] > 1) {
-                    rj[i] = 1.0;
+                if (vektor[i] < 0) {
+                    vektor[i] = 0.0;
+                } else if (vektor[i] > 1) {
+                    vektor[i] = 1.0;
                 }
             } else if (i == 6) {
-                if (rj[i] < this.dolnaHranicaVelkostPopulacie) {
-                    rj[i] = this.dolnaHranicaVelkostPopulacie;
-                } else if (rj[i] > this.hornaHranicaVelkostPopulacie) {
-                    rj[i] = this.hornaHranicaVelkostPopulacie;
+                if (vektor[i] < this.dolnaHranicaVelkostPopulacie) {
+                    vektor[i] = this.dolnaHranicaVelkostPopulacie;
+                } else if (vektor[i] > this.hornaHranicaVelkostPopulacie) {
+                    vektor[i] = this.hornaHranicaVelkostPopulacie;
                 }
-                rj[i] = Math.round(rj[i]);
+                vektor[i] = Math.round(vektor[i]);
             }
         }
     }
 
-    private double[] dajNahodneParametre() {
+    private double[] dajNahodneParametreVOkoliAlpha(double okolieAlpha, double[] pk) {
         double[] nahodneParametre = new double[this.pociatocneParametre.size()];
         int i = 0;
 
-        int pocetIteracii = (int) (Math.random() * this.hornaHranicaPocetIteracii + 1);
-        nahodneParametre[i] = pocetIteracii;
+        //pocetMinut
+        double hornaHranicaPocetMinut = pk[i] + ((this.hornaHranicaPocetMinut - pk[i]) * okolieAlpha);
+        double dolnaHranicaPocetMinut = pk[i] - ((pk[i] - 0) * okolieAlpha);
+        double pocetMinut = (Math.random() * (hornaHranicaPocetMinut - dolnaHranicaPocetMinut + 1) + dolnaHranicaPocetMinut);
+        nahodneParametre[i] = pocetMinut;
         i++;
 
         //pocetNeaktualizovaniaDNNR
-        int pocetNeaktualizovaniaDNNR = (int) (Math.random() * pocetIteracii + 1);
+        double hornaHranicaPocetNeaktualizovaniaDNNR = pk[i] + ((this.hornaHranicaPocetNeaktualizovaniaDNNR - pk[i]) * okolieAlpha);
+        double dolnaHranicaPocetNeaktualizovaniaDNNR = pk[i] - ((pk[i] - 0) * okolieAlpha);
+        int pocetNeaktualizovaniaDNNR = (int) (Math.random() * (hornaHranicaPocetNeaktualizovaniaDNNR - dolnaHranicaPocetNeaktualizovaniaDNNR + 1) + dolnaHranicaPocetNeaktualizovaniaDNNR);
         nahodneParametre[i] = pocetNeaktualizovaniaDNNR;
         i++;
 
         //pravdepodobnostKrizenia
-        double pravdepodobnostKrizenia = Math.random();
+        double hornaHranicaPravdepodobnostKrizenia = pk[i] + ((1 - pk[i]) * okolieAlpha);
+        double dolnaHranicaPravdepodobnostKrizenia = pk[i] - ((pk[i] - 0) * okolieAlpha);
+        double pravdepodobnostKrizenia = (Math.random() * (hornaHranicaPravdepodobnostKrizenia - dolnaHranicaPravdepodobnostKrizenia + 1) + dolnaHranicaPravdepodobnostKrizenia);
         nahodneParametre[i] = (pravdepodobnostKrizenia);
         i++;
 
         //pocetMutacii
-        int pocetMutacii = (int) (Math.random() * this.hornaHranicaPocetMutacii + 1);
+        double hornaHranicaPocetMutacii = pk[i] + ((this.hornaHranicaPocetMutacii - pk[i]) * okolieAlpha);
+        double dolnaHranicaPocetMutacii = pk[i] - ((pk[i] - 0) * okolieAlpha);
+        int pocetMutacii = (int) (Math.random() * (hornaHranicaPocetMutacii - dolnaHranicaPocetMutacii + 1) + dolnaHranicaPocetMutacii);
         nahodneParametre[i] = pocetMutacii;
         i++;
 
         //pravdepodobnostMutacie
-        double pravdepodobnostMutacie = Math.random();
+        double hornaHranicaPravdepodobnostMutacie = pk[i] + ((1 - pk[i]) * okolieAlpha);
+        double dolnaHranicaPravdepodobnostMutacie = pk[i] - ((pk[i] - 0) * okolieAlpha);
+        double pravdepodobnostMutacie = (Math.random() * (hornaHranicaPravdepodobnostMutacie - dolnaHranicaPravdepodobnostMutacie + 1) + dolnaHranicaPravdepodobnostMutacie);
         nahodneParametre[i] = (pravdepodobnostMutacie);
         i++;
 
         //percentoTopRieseni
-        double percentoTopRieseni = Math.random();
+        double hornaHranicaPercentoTopRieseni = pk[i] + ((1 - pk[i]) * okolieAlpha);
+        double dolnaHranicaPercentoTopRieseni = pk[i] - ((pk[i] - 0) * okolieAlpha);
+        double percentoTopRieseni = (Math.random() * (hornaHranicaPercentoTopRieseni - dolnaHranicaPercentoTopRieseni + 1) + dolnaHranicaPercentoTopRieseni);
         nahodneParametre[i] = (percentoTopRieseni);
+        i++;
 
         //velkostPopulacie
-        double velkostPopulacie = (int) (Math.random() * (this.hornaHranicaVelkostPopulacie - this.dolnaHranicaVelkostPopulacie + 1) + this.dolnaHranicaVelkostPopulacie);
+        double hornaHranicaVelkostPopulacie = pk[i] + ((this.hornaHranicaVelkostPopulacie - pk[i]) * okolieAlpha);
+        double dolnaHranicaVelkostPopulacie = pk[i] - ((pk[i] - this.dolnaHranicaVelkostPopulacie) * okolieAlpha);
+        double velkostPopulacie = (int) (Math.random() * (hornaHranicaVelkostPopulacie - dolnaHranicaVelkostPopulacie + 1) + dolnaHranicaVelkostPopulacie);
         nahodneParametre[i] = velkostPopulacie;
 
         return nahodneParametre;
     }
 
-    private double normaVektoraR() {
+    private double normaVektora(double[] vektor) {
         double sum = 0;
-        for (Double d : this.r) {
-            sum += Math.pow(d, 2);
+        for (Double clen : vektor) {
+            sum += Math.pow(clen, 2);
         }
         return Math.sqrt(sum);
     }
 
     private void upravR(double[] pkj, double[] pk) {
         for (int i = 0; i < this.r.length; i++) {
-            this.r[i] = this.r[i] + ((this.novenohodnotenieDNNR - this.ohodnotenieDNNR) * (pkj[i] - pk[i]));
+            this.r[i] = this.r[i] + ((this.noveOhodnotenieDNNR - this.ohodnotenieDNNR) * (pkj[i] - pk[i]));
         }
         this.skontrolujParametre(this.r);
     }
 
     private void upravW(double[] W, double parameterZabudania, double intenzitaUcenia, double[] pkj, double[] pk) {
         for (int i = 0; i < W.length; i++) {
-            W[i] = parameterZabudania * W[i] + intenzitaUcenia * ((this.novenohodnotenieDNNR - this.ohodnotenieDNNR) * (pkj[i] - pk[i]));
+            W[i] = (parameterZabudania * W[i]) + intenzitaUcenia * ((this.ohodnotenieDNNR - this.noveOhodnotenieDNNR) * (pkj[i] - pk[i]));
         }
 
         this.skontrolujParametre(W);
