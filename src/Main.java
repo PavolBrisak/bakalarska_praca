@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        int cisloDatasetu = 2;
+        int cisloDatasetu = 6;
 
         Vstup scanner = new Vstup();
         ArrayList<Spoj> nacitaneSpoje = scanner.nacitajSpoje("input_data/spoje_id_DS" + cisloDatasetu + "_J_1.csv");
@@ -16,18 +16,23 @@ public class Main {
         nacitaneSpoje.remove(0);
         nacitaneSpoje.remove(nacitaneSpoje.size() - 1);
 
-//        GenetickyAlgoritmus GA = new GenetickyAlgoritmus(nacitaneSpoje, maticaVzdialenosti, maticaSpotreby, 25.0);
-//        GA.genetickyAlgoritmus(3.0, 1800.0, 0.9, 10.0, 0.9, 0.1);
-//        GA.vypisDNNR();
+//        double vysledok = 0;
+//        for (int i = 0; i < 1000; i++) {
+//            GenetickyAlgoritmus GA = new GenetickyAlgoritmus(nacitaneSpoje, maticaVzdialenosti, maticaSpotreby, 193.01124474197195);
+//            GA.genetickyAlgoritmus(1.0034184843979481, 968.5783682223001, 0.9997013866805557, 0.0, 0.0014571988944675565, 0.7786107018961468);
+//            GA.vypisDNNR();
+//            vysledok += GA.dajOhodnotenieDNNR();
+//        }
+//        System.out.println(vysledok / 1000);
 
 
         MetodaSupra metodaSupra = new MetodaSupra(nacitaneSpoje, maticaVzdialenosti, maticaSpotreby);
-        metodaSupra.metodaSupra(10, 0.5, 0.5, 10, 0.2);
+        metodaSupra.metodaSupra(25, 0.5, 0.05, 20, 0.3);
         metodaSupra.vypisDNNR();
 
-        KlasickeNastavovanie nastavovanie = new KlasickeNastavovanie(nacitaneSpoje, maticaVzdialenosti, maticaSpotreby);
-        nastavovanie.nastavParameter(0.0, 1.0, 0.05, 100, "pravdepodobnostMutacie");
-        nastavovanie.vypisCelkoveVysledky();
-        nastavovanie.vypisNajlepsieNastavenie();
+//        KlasickeNastavovanie nastavovanie = new KlasickeNastavovanie(nacitaneSpoje, maticaVzdialenosti, maticaSpotreby);
+//        nastavovanie.nastavParameter(2.0, 1500.0, 50.0, 100, "velkostPopulacie");
+//        nastavovanie.vypisCelkoveVysledky();
+//        nastavovanie.vypisNajlepsieNastavenie();
     }
 }

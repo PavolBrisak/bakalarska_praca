@@ -64,9 +64,6 @@ public class GenetickyAlgoritmus {
     public void genetickyAlgoritmus(double pocetMinut, double pocetNeaktualizovaniaDNNR, double pravdepodobnostKrizenia, double pocetMutacii, double pravdepodobnostMutacie, double percentoTopRieseni) {
         long start = System.currentTimeMillis();
         int neaktualizovaneDNNR = 0;
-        System.out.println("Počet minút: " + pocetMinut);
-        System.out.println("Start: " + start);
-        System.out.println("Počet neaktualizovania DNNR: " + pocetNeaktualizovaniaDNNR);
         while ((((double)(System.currentTimeMillis() - start) / 60000) < pocetMinut) && (neaktualizovaneDNNR < pocetNeaktualizovaniaDNNR)) {
             boolean dosloKAktualizaciiDNNR = false;
             this.naplnenieTopRieseniami(percentoTopRieseni);
@@ -102,9 +99,6 @@ public class GenetickyAlgoritmus {
                 neaktualizovaneDNNR++;
             }
         }
-        System.out.println("Počet neaktualizovania DNNR: " + neaktualizovaneDNNR);
-        System.out.println("Koniec: " + System.currentTimeMillis());
-        System.out.println("Trvanie: " + ((double)(System.currentTimeMillis() - start) / 60000) + " minút");
     }
 
     private void novaPermutacia() {
