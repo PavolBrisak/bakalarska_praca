@@ -69,12 +69,13 @@ public class GenetickyAlgoritmus {
             this.naplnenieTopRieseniami(percentoTopRieseni);
             while (this.novaPopulacia.size() < this.velkostPopulacie) {
 
+                int indexRodic1 = this.dajPoziciuRodica();
+                int indexRodic2;
+                do {
+                    indexRodic2 = this.dajPoziciuRodica();
+                } while (indexRodic1 == indexRodic2);
+
                 if (Math.random() <= pravdepodobnostKrizenia) {
-                    int indexRodic1 = this.dajPoziciuRodica();
-                    int indexRodic2;
-                    do {
-                        indexRodic2 = this.dajPoziciuRodica();
-                    } while (indexRodic1 == indexRodic2);
                     Riesenie potomok = new Riesenie();
                     this.krizenie(indexRodic1, indexRodic2, potomok);
                     this.opravPotomka(potomok);
@@ -102,6 +103,7 @@ public class GenetickyAlgoritmus {
     }
 
     private void novaPermutacia() {
+        // vytvor pocet vymen na nahodne cislo od 1 po pocet spojov
         int pocetVymen = this.random.nextInt(1, this.spoje.size() + 1);
         for (int i = 0; i < pocetVymen; i++) {
             int index1 = this.random.nextInt(this.spoje.size());
@@ -124,6 +126,7 @@ public class GenetickyAlgoritmus {
         for (Turnus turnus : riesenie.getTurnusy()) {
             double spotreba = 0.0;
             for (int i = 0; i < turnus.getSpoje().size() - 1; i++) {
+                //spotreba spoj - spoj
                 spotreba += this.maticaSpotreby[turnus.getSpoje().get(i).getIndex()][turnus.getSpoje().get(i + 1).getIndex()];
             }
 
@@ -156,7 +159,7 @@ public class GenetickyAlgoritmus {
     }
 
     private void krizenie(int poziciaRodica1, int poziciaRodica2, Riesenie potomok) {
-        int bodKrizeniaRodic1 = this.random.nextInt(0, this.staraPopulacia.get(poziciaRodica1).getTurnusy().size());
+       int bodKrizeniaRodic1 = this.random.nextInt(0, this.staraPopulacia.get(poziciaRodica1).getTurnusy().size());
         for (int i = 0; i <= bodKrizeniaRodic1; i++) {
 
             potomok.pridajTurnus(this.staraPopulacia.get(poziciaRodica1).getTurnusy().get(i));
@@ -169,6 +172,7 @@ public class GenetickyAlgoritmus {
     }
 
     private void opravPotomka(Riesenie potomok) {
+        // zistim, ktore spoje sa vyskytuju viac ako raz
         int[] pocetOpakovani = new int[this.pomocneSpoje.size()];
         Iterator<Turnus> iteratorTurnusy = potomok.getTurnusy().iterator();
         while (iteratorTurnusy.hasNext()) {
@@ -177,12 +181,15 @@ public class GenetickyAlgoritmus {
             while (iteratorSpoje.hasNext()) {
                 Spoj spoj = iteratorSpoje.next();
                 if (pocetOpakovani[spoj.getIndex() - 1] == 1) {
+                    // ak sa spoj v turnuse vyskytuje viac ako raz, tak ho vymazeme
                     iteratorSpoje.remove();
                 } else {
                     pocetOpakovani[spoj.getIndex() - 1]++;
                 }
             }
         }
+
+        // pridam spoje, ktore sa v turnusoch nevyskytuju
         for (int i = 0; i < pocetOpakovani.length; i++) {
             if (pocetOpakovani[i] == 0) {
                 boolean pridany = false;
@@ -205,8 +212,9 @@ public class GenetickyAlgoritmus {
     }
 
     private void mutacia(Riesenie potomok) {
+        // vyberieme nahodne zvolene spoje z nahodne zvoleneho turnusu
         ArrayList<Spoj> vybraneSpoje = new ArrayList<>();
-        int indexTurnusu = 0;
+        int indexTurnusu;
         int pocetVybranychSpojov = this.random.nextInt(1, potomok.getPocetSpojov() + 1);
         for (int i = pocetVybranychSpojov; i > 0; i--) {
             do {
@@ -216,6 +224,7 @@ public class GenetickyAlgoritmus {
             Spoj vybrany = potomok.getTurnusy().get(indexTurnusu).getSpoje().remove(indexSpoja);
             vybraneSpoje.add(vybrany);
         }
+        // vybrane spoje zamiesame a snazime sa ich vlozit do turnusov
         Collections.shuffle(vybraneSpoje);
         for (Spoj spoj : vybraneSpoje) {
             if (potomok.getTurnusy().size() == 0) {

@@ -1,9 +1,11 @@
 package src;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class KlasickeNastavovanie {
     private ArrayList<Spoj> spoje;
+    private ArrayList<Double> fixneNastavenia = new ArrayList<>(List.of(5.0, 500.0, 0.5, 50.0, 0.5, 0.5, 500.0));
     private int[][] maticaVzdialenosti;
     private double[][] maticaSpotreby;
 
@@ -34,29 +36,29 @@ public class KlasickeNastavovanie {
     }
 
     private double zbehniGenetickyAlgoritmus(double p, String typ) {
-        GenetickyAlgoritmus GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, 150);
+        GenetickyAlgoritmus GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, this.fixneNastavenia.get(6));
         switch (typ) {
             case "pocetMinut":
-                GA.genetickyAlgoritmus(p, 500, 1.0, 10.0, 0.5, 0.1);
+                GA.genetickyAlgoritmus(p, this.fixneNastavenia.get(1), this.fixneNastavenia.get(2), this.fixneNastavenia.get(3), this.fixneNastavenia.get(4), this.fixneNastavenia.get(5));
                 return GA.dajOhodnotenieDNNR();
             case "pocetNeaktualizovaniaDNNR":
-                GA.genetickyAlgoritmus(5, p, 1.0, 10.0, 0.5, 0.1);
+                GA.genetickyAlgoritmus(this.fixneNastavenia.get(0), p, this.fixneNastavenia.get(2), this.fixneNastavenia.get(3), this.fixneNastavenia.get(4), this.fixneNastavenia.get(5));
                 return GA.dajOhodnotenieDNNR();
             case "pravdepodobnostKrizenia":
-                GA.genetickyAlgoritmus(5, 500, p, 10.0, 0.5, 0.1);
+                GA.genetickyAlgoritmus(this.fixneNastavenia.get(0), this.fixneNastavenia.get(1), p, this.fixneNastavenia.get(3), this.fixneNastavenia.get(4), this.fixneNastavenia.get(5));
                 return GA.dajOhodnotenieDNNR();
             case "pocetMutacii":
-                GA.genetickyAlgoritmus(5, 500, 1.0, p, 0.5, 0.1);
+                GA.genetickyAlgoritmus(this.fixneNastavenia.get(0), this.fixneNastavenia.get(1), this.fixneNastavenia.get(2), p, this.fixneNastavenia.get(4), this.fixneNastavenia.get(5));
                 return GA.dajOhodnotenieDNNR();
             case "pravdepodobnostMutacie":
-                GA.genetickyAlgoritmus(5, 500, 1.0, 10.0, p, 0.1);
+                GA.genetickyAlgoritmus(this.fixneNastavenia.get(0), this.fixneNastavenia.get(1), this.fixneNastavenia.get(2), this.fixneNastavenia.get(3), p, this.fixneNastavenia.get(5));
                 return GA.dajOhodnotenieDNNR();
             case "percentoTopRieseni":
-                GA.genetickyAlgoritmus(5, 500, 1.0, 10.0, 0.5, p);
+                GA.genetickyAlgoritmus(this.fixneNastavenia.get(0), this.fixneNastavenia.get(1), this.fixneNastavenia.get(2), this.fixneNastavenia.get(3), this.fixneNastavenia.get(4), p);
                 return GA.dajOhodnotenieDNNR();
             case "velkostPopulacie":
                 GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, p);
-                GA.genetickyAlgoritmus(5, 500, 1.0, 10.0, 0.5, 0.1);
+                GA.genetickyAlgoritmus(this.fixneNastavenia.get(0), this.fixneNastavenia.get(1), this.fixneNastavenia.get(2), this.fixneNastavenia.get(3), this.fixneNastavenia.get(4), this.fixneNastavenia.get(5));
                 return GA.dajOhodnotenieDNNR();
             default:
                 //TODO doplnit vynimku

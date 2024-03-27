@@ -1,19 +1,22 @@
 package src;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MetodaSupra {
     // pocetMinut pocetNeaktualizovaniaDNNR pravdepodobnostKrizenia pocetMutacii pravdepodobnostMutacie percentoTopRieseni velkostPopulacie
-    private ArrayList<Double> pociatocneParametre = new ArrayList<Double>(List.of(1.0, 100.0, 0.5, 90.0, 0.5, 0.02, 15.0));
-    private ArrayList<Double> horneADolneHranice = new ArrayList<Double>(List.of(1.0, 5.0, 10.0, 1000.0, 0.1, 1.0, 0.0, 100.0, 0.0, 1.0, 0.0, 1.0, 2.0, 1000.0));
+    private ArrayList<Double> pociatocneParametre = new ArrayList<Double>(List.of(5.5, 500.0, 0.5, 50.0, 0.5, 0.5, 500.0));
+    private ArrayList<Double> horneADolneHranice = new ArrayList<Double>(List.of(1.0, 10.0, 10.0, 1000.0, 0.1, 1.0, 0.0, 100.0, 0.0, 1.0, 0.0, 1.0, 2.0, 1500.0));
+    private ArrayList<Integer> pocetDesMiest = new ArrayList<Integer>(List.of(1, 0, 2, 0, 2, 2, 0));
     private ArrayList<Spoj> spoje;
     private int[][] maticaVzdialenosti;
     private double[][] maticaSpotreby;
     private ArrayList<Double> DNNR = new ArrayList<>();
     private Riesenie DNNRriesenie = new Riesenie();
     private double ohodnotenieDNNR;
-    private double noveOhodnotenieDNNR;
+    private double noveOhodnotenie;
+    private double ohodnoteniePk;
     private double[] r;
     private double[] W;
 
@@ -25,6 +28,7 @@ public class MetodaSupra {
         GenetickyAlgoritmus GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, this.pociatocneParametre.get(6));
         GA.genetickyAlgoritmus(this.pociatocneParametre.get(0), this.pociatocneParametre.get(1), this.pociatocneParametre.get(2), this.pociatocneParametre.get(3), this.pociatocneParametre.get(4), this.pociatocneParametre.get(5));
         this.ohodnotenieDNNR = GA.dajOhodnotenieDNNR();
+        this.ohodnoteniePk = GA.dajOhodnotenieDNNR();
 
         this.DNNR.addAll(this.pociatocneParametre);
 
@@ -32,14 +36,14 @@ public class MetodaSupra {
         this.W = new double[this.pociatocneParametre.size()];
     }
 
-    public void metodaSupra(int pocetKrokov, double parameterZabudania, double intenzitaUcenia, int max_s, double A) {
+    public void metodaSupra(int N, double B, double C, int max_s, double A, int maxPocetAb) {
         double[] pk = new double[this.pociatocneParametre.size()];
 
         for (int i = 0; i < pk.length; i++) {
             pk[i] = this.pociatocneParametre.get(i);
         }
 
-        for (int krok = 1; krok <= pocetKrokov; krok++) {
+        for (int krok = 1; krok <= N; krok++) {
             System.out.println("Krok: " + krok);
 
             System.out.println("Pk:");
@@ -51,11 +55,21 @@ public class MetodaSupra {
             // 1. faza
             int j = 0;
 
+            Arrays.fill(this.r, 0);
+            Arrays.fill(this.W, 0);
+
             while (j < max_s) {
                 // náhodný vektor x
                 double[] x = new double[this.pociatocneParametre.size()];
-                double[] nahodneParametre = this.dajNahodneParametreVOkoliA(A, pk);
+                double[] nahodneParametre = this.dajLokalnuHranicu(pk, A);
                 System.arraycopy(nahodneParametre, 0, x, 0, x.length);
+
+                for (int i = 0; i < x.length; i++) {
+                    // daj nahodne cislo z intervalu <-x, x>
+                    x[i] = Math.random() * (x[i] - (-x[i])) + (-x[i]);
+                }
+
+                this.zaokruhliParametre(x);
 
                 System.out.println("X:");
                 for (double v : x) {
@@ -67,8 +81,9 @@ public class MetodaSupra {
                 double[] rj = new double[this.pociatocneParametre.size()];
                 for (int i = 0; i < rj.length; i++) {
                     rj[i] = this.W[i] + x[i];
-                    rj[i] = Math.round(rj[i] * 100.0) / 100.0;
                 }
+
+                this.zaokruhliParametre(rj);
 
                 System.out.println("Rj:");
                 for (double v : rj) {
@@ -80,9 +95,9 @@ public class MetodaSupra {
                 double[] pkj = new double[this.pociatocneParametre.size()];
                 for (int i = 0; i < pkj.length; i++) {
                     pkj[i] = pk[i] + rj[i];
-                    pkj[i] = Math.round(pkj[i] * 100.0) / 100.0;
                 }
 
+                this.zaokruhliParametre(pkj);
                 this.skontrolujParametre(pkj);
 
                 System.out.println("Pkj:");
@@ -93,10 +108,12 @@ public class MetodaSupra {
 
                 GenetickyAlgoritmus GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, pkj[6]);
                 GA.genetickyAlgoritmus(pkj[0], pkj[1], pkj[2], pkj[3], pkj[4], pkj[5]);
-                this.noveOhodnotenieDNNR = GA.dajOhodnotenieDNNR();
+                this.noveOhodnotenie = GA.dajOhodnotenieDNNR();
+                System.out.println("Nove ohodnotenie: " + this.noveOhodnotenie);
+                System.out.println("Stare ohodnotenie: " + this.ohodnoteniePk);
 
-                if (this.noveOhodnotenieDNNR < this.ohodnotenieDNNR) {
-                    this.ohodnotenieDNNR = this.noveOhodnotenieDNNR;
+                if (this.noveOhodnotenie < this.ohodnotenieDNNR) {
+                    this.ohodnotenieDNNR = this.noveOhodnotenie;
                     for (int i = 0; i < pkj.length; i++) {
                         this.DNNR.set(i, pkj[i]);
                     }
@@ -106,8 +123,8 @@ public class MetodaSupra {
                 }
 
                 //aktualizuj hodnoty r a w
-                this.upravR(pkj, pk);
-                this.upravW(this.W, parameterZabudania, intenzitaUcenia, pkj, pk);
+                this.upravR(pkj, pk, this.ohodnoteniePk);
+                this.upravW(this.W, B, C, pkj, pk, this.ohodnoteniePk);
 
                 System.out.println("R:");
                 for (double v : this.r) {
@@ -126,24 +143,30 @@ public class MetodaSupra {
             }
 
             //2. faza
-            int pocetAb = 0; //pocet krokov od posledneho zlepsenia hodnoty riesenia
-            int maxPocetAb = 10;
+            int pocetAb = 0;
             double alpha = 1;
-            double minAlpha = 0.05;
-            double normaVektoraR = this.normaVektora(this.r);
             double stareOhodnotenieP = Double.MAX_VALUE;
+            double[] najlepsiP = new double[this.pociatocneParametre.size()];
 
-//            double[] pomocna = this.dajNahodneParametreVOkoliA(A, pk);
             double[] pomocna = this.dajLokalnuHranicu(pk, A);
+
+            System.out.println("Pk:");
+            for (double v : pk) {
+                System.out.print(v + " ");
+            }
+            System.out.println();
 
             while (pocetAb < maxPocetAb) {
                 // vypocitaj novy bod p
                 double[] p = new double[this.pociatocneParametre.size()];
+
+                //prvy napad - problem ze sa nasobia malinke cisla a teda posun je minimalny
                 for (int i = 0; i < p.length; i++) {
-                    p[i] = pk[i] + (pomocna[i] * alpha * (this.r[i] / normaVektoraR));
-                    p[i] = Math.round(p[i] * 100.0) / 100.0;
+                    double absolutnaHodnota = Math.abs(this.r[i]);
+                    p[i] = pk[i] + (pomocna[i] * alpha * (this.r[i] / absolutnaHodnota));
                 }
 
+                this.zaokruhliParametre(p);
                 this.skontrolujParametre(p);
 
                 System.out.println("P:");
@@ -154,30 +177,29 @@ public class MetodaSupra {
 
                 GenetickyAlgoritmus GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, p[6]);
                 GA.genetickyAlgoritmus(p[0], p[1], p[2], p[3], p[4], p[5]);
-                this.noveOhodnotenieDNNR = GA.dajOhodnotenieDNNR();
+                this.noveOhodnotenie = GA.dajOhodnotenieDNNR();
 
-                if (this.noveOhodnotenieDNNR < stareOhodnotenieP) {
-                    stareOhodnotenieP = this.noveOhodnotenieDNNR;
-
-                    System.arraycopy(p, 0, pk, 0, pk.length);
+                if (this.noveOhodnotenie < stareOhodnotenieP) {
+                    stareOhodnotenieP = this.noveOhodnotenie;
+                    System.arraycopy(p, 0, najlepsiP, 0, najlepsiP.length);
                 }
 
-                if (this.noveOhodnotenieDNNR < this.ohodnotenieDNNR) {
-                    this.ohodnotenieDNNR = this.noveOhodnotenieDNNR;
+                if (this.noveOhodnotenie < this.ohodnotenieDNNR) {
+                    this.ohodnotenieDNNR = this.noveOhodnotenie;
                     for (int i = 0; i < p.length; i++) {
                         this.DNNR.set(i, p[i]);
                     }
 
                     Riesenie riesenie = GA.getDNNR();
                     this.DNNRriesenie = new Riesenie(riesenie);
-
-                    pocetAb = 0;
-                } else {
-                    pocetAb++;
                 }
 
+                pocetAb++;
                 alpha = alpha / 2;
             }
+
+            System.arraycopy(najlepsiP, 0, pk, 0, pk.length);
+            this.ohodnoteniePk = stareOhodnotenieP;
         }
     }
 
@@ -222,31 +244,29 @@ public class MetodaSupra {
             double rozdiel2 = vektor[i] - this.horneADolneHranice.get(index);
             double vacsiRozdiel = Math.max(rozdiel, rozdiel2);
 
-            hranice[i] = (vacsiRozdiel * A);
+            hranice[i] = vacsiRozdiel * A;
         }
 
         return hranice;
     }
 
-    private double normaVektora(double[] vektor) {
-        double sum = 0;
-        for (Double clen : vektor) {
-            sum += Math.pow(clen, 2);
-        }
-        return Math.sqrt(sum);
-    }
-
-    private void upravR(double[] pkj, double[] pk) {
+    private void upravR(double[] pkj, double[] pk, double ohodnoteniePk) {
         for (int i = 0; i < this.r.length; i++) {
-            this.r[i] = this.r[i] + ((this.ohodnotenieDNNR - this.noveOhodnotenieDNNR) * (pkj[i] - pk[i]));
+            this.r[i] = this.r[i] + ((ohodnoteniePk - this.noveOhodnotenie) * (pkj[i] - pk[i]));
             this.r[i] = Math.round(this.r[i] * 100.0) / 100.0;
         }
     }
 
-    private void upravW(double[] W, double parameterZabudania, double intenzitaUcenia, double[] pkj, double[] pk) {
+    private void upravW(double[] W, double B, double C, double[] pkj, double[] pk, double ohodnoteniePk) {
         for (int i = 0; i < W.length; i++) {
-            W[i] = (parameterZabudania * W[i]) + intenzitaUcenia * ((this.ohodnotenieDNNR - this.noveOhodnotenieDNNR) * (pkj[i] - pk[i]));
+            W[i] = (B * W[i]) + C * ((ohodnoteniePk - this.noveOhodnotenie) * (pkj[i] - pk[i]));
             W[i] = Math.round(W[i] * 100.0) / 100.0;
+        }
+    }
+
+    private void zaokruhliParametre(double[] vektor) {
+        for (int i = 0; i < vektor.length; i++) {
+            vektor[i] = Math.round(vektor[i] * Math.pow(10, this.pocetDesMiest.get(i))) / Math.pow(10, this.pocetDesMiest.get(i));
         }
     }
 

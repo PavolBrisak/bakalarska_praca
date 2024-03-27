@@ -1,7 +1,6 @@
 package src;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class Turnus {
     private ArrayList<Spoj> spoje = new ArrayList<>();
@@ -19,11 +18,13 @@ public class Turnus {
     }
 
     public boolean pridalSa(Spoj spoj, int[][] maticaVzdialenosti) {
+        // ak je turnus prazdny, pridaj spoj na prve miesto
         if (this.spoje.isEmpty()) {
             this.spoje.add(spoj);
             return true;
         }
 
+        // ak je v turnuse len jeden spoj
         if (this.spoje.size() == 1) {
             if ((this.spoje.get(0).getCasOd() >= spoj.getCasDo()) && (maticaVzdialenosti[spoj.getIndex()][this.spoje.get(0).getIndex()] <= (this.spoje.get(0).getCasOd() - spoj.getCasDo()))) {
                 this.spoje.add(0, spoj);
@@ -40,12 +41,22 @@ public class Turnus {
             Spoj currentSpoj = this.spoje.get(i);
             Spoj nextSpoj = this.spoje.get(i + 1);
 
+            if (i == 0) {
+                // ak sa da, tak pridaj spoj na prve miesto
+                if ((currentSpoj.getCasOd() >= spoj.getCasDo()) && (maticaVzdialenosti[spoj.getIndex()][currentSpoj.getIndex()] <= (currentSpoj.getCasOd() - spoj.getCasDo()))) {
+                    this.spoje.add(0, spoj);
+                    return true;
+                }
+            }
+
+            // ak sa da, tak pridaj spoj na i-te miesto
             if ((currentSpoj.getCasDo() <= spoj.getCasOd()) && (maticaVzdialenosti[currentSpoj.getIndex()][spoj.getIndex()] <= (spoj.getCasOd() - currentSpoj.getCasDo())) && (spoj.getCasDo() <= nextSpoj.getCasOd()) && (maticaVzdialenosti[spoj.getIndex()][nextSpoj.getIndex()] <= (nextSpoj.getCasOd() - spoj.getCasDo()))) {
                 this.spoje.add(i + 1, spoj);
                 return true;
             }
         }
 
+        // ak sa da, tak pridaj spoj na posledne miesto
         if ((this.spoje.get(this.spoje.size() - 1).getCasDo() <= spoj.getCasOd()) && (maticaVzdialenosti[this.spoje.get(this.spoje.size() - 1).getIndex()][spoj.getIndex()] <= (spoj.getCasOd() - this.spoje.get(this.spoje.size() - 1).getCasDo()))) {
             this.spoje.add(spoj);
             return true;
