@@ -1,6 +1,5 @@
 package src;
 
-import java.sql.Time;
 import java.util.*;
 
 public class GenetickyAlgoritmus {
@@ -61,7 +60,7 @@ public class GenetickyAlgoritmus {
         }
     }
 
-    public void genetickyAlgoritmus(double pocetMinut, double pocetNeaktualizovaniaDNNR, double pravdepodobnostKrizenia, double pocetMutacii, double pravdepodobnostMutacie, double percentoTopRieseni) {
+    public void run(double pocetMinut, double pocetNeaktualizovaniaDNNR, double pravdepodobnostKrizenia, double pocetMutacii, double pravdepodobnostMutacie, double percentoTopRieseni) {
         long start = System.currentTimeMillis();
         int neaktualizovaneDNNR = 0;
         while ((((double)(System.currentTimeMillis() - start) / 60000) < pocetMinut) && (neaktualizovaneDNNR < pocetNeaktualizovaniaDNNR)) {

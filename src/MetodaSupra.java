@@ -26,7 +26,7 @@ public class MetodaSupra {
         this.maticaSpotreby = maticaSpotreby;
 
         GenetickyAlgoritmus GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, this.pociatocneParametre.get(6));
-        GA.genetickyAlgoritmus(this.pociatocneParametre.get(0), this.pociatocneParametre.get(1), this.pociatocneParametre.get(2), this.pociatocneParametre.get(3), this.pociatocneParametre.get(4), this.pociatocneParametre.get(5));
+        GA.run(this.pociatocneParametre.get(0), this.pociatocneParametre.get(1), this.pociatocneParametre.get(2), this.pociatocneParametre.get(3), this.pociatocneParametre.get(4), this.pociatocneParametre.get(5));
         this.ohodnotenieDNNR = GA.dajOhodnotenieDNNR();
         this.ohodnoteniePk = GA.dajOhodnotenieDNNR();
 
@@ -36,7 +36,7 @@ public class MetodaSupra {
         this.W = new double[this.pociatocneParametre.size()];
     }
 
-    public void metodaSupra(int N, double B, double C, int max_s, double A, int maxPocetAb) {
+    public void run(int N, double B, double C, int max_s, double A, int maxPocetAb) {
         double[] pk = new double[this.pociatocneParametre.size()];
 
         for (int i = 0; i < pk.length; i++) {
@@ -45,12 +45,6 @@ public class MetodaSupra {
 
         for (int krok = 1; krok <= N; krok++) {
             System.out.println("Krok: " + krok);
-
-            System.out.println("Pk:");
-            for (double v : pk) {
-                System.out.print(v + " ");
-            }
-            System.out.println();
 
             // 1. faza
             int j = 0;
@@ -71,12 +65,6 @@ public class MetodaSupra {
 
                 this.zaokruhliParametre(x);
 
-                System.out.println("X:");
-                for (double v : x) {
-                    System.out.print(v + " ");
-                }
-                System.out.println();
-
                 // vektor rj podľa vzťahu rj = w + x
                 double[] rj = new double[this.pociatocneParametre.size()];
                 for (int i = 0; i < rj.length; i++) {
@@ -84,12 +72,6 @@ public class MetodaSupra {
                 }
 
                 this.zaokruhliParametre(rj);
-
-                System.out.println("Rj:");
-                for (double v : rj) {
-                    System.out.print(v + " ");
-                }
-                System.out.println();
 
                 // bod pkj na základe rj
                 double[] pkj = new double[this.pociatocneParametre.size()];
@@ -100,17 +82,9 @@ public class MetodaSupra {
                 this.zaokruhliParametre(pkj);
                 this.skontrolujParametre(pkj);
 
-                System.out.println("Pkj:");
-                for (double v : pkj) {
-                    System.out.print(v + " ");
-                }
-                System.out.println();
-
                 GenetickyAlgoritmus GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, pkj[6]);
-                GA.genetickyAlgoritmus(pkj[0], pkj[1], pkj[2], pkj[3], pkj[4], pkj[5]);
+                GA.run(pkj[0], pkj[1], pkj[2], pkj[3], pkj[4], pkj[5]);
                 this.noveOhodnotenie = GA.dajOhodnotenieDNNR();
-                System.out.println("Nove ohodnotenie: " + this.noveOhodnotenie);
-                System.out.println("Stare ohodnotenie: " + this.ohodnoteniePk);
 
                 if (this.noveOhodnotenie < this.ohodnotenieDNNR) {
                     this.ohodnotenieDNNR = this.noveOhodnotenie;
@@ -126,19 +100,6 @@ public class MetodaSupra {
                 this.upravR(pkj, pk, this.ohodnoteniePk);
                 this.upravW(this.W, B, C, pkj, pk, this.ohodnoteniePk);
 
-                System.out.println("R:");
-                for (double v : this.r) {
-                    System.out.print(v + " ");
-                }
-                System.out.println();
-
-                System.out.println("W:");
-                for (double v : this.W) {
-                    System.out.print(v + " ");
-                }
-                System.out.println();
-                System.out.println("*******************************");
-
                 j++;
             }
 
@@ -149,12 +110,6 @@ public class MetodaSupra {
             double[] najlepsiP = new double[this.pociatocneParametre.size()];
 
             double[] pomocna = this.dajLokalnuHranicu(pk, A);
-
-            System.out.println("Pk:");
-            for (double v : pk) {
-                System.out.print(v + " ");
-            }
-            System.out.println();
 
             while (pocetAb < maxPocetAb) {
                 // vypocitaj novy bod p
@@ -169,14 +124,8 @@ public class MetodaSupra {
                 this.zaokruhliParametre(p);
                 this.skontrolujParametre(p);
 
-                System.out.println("P:");
-                for (double v : p) {
-                    System.out.print(v + " ");
-                }
-                System.out.println();
-
                 GenetickyAlgoritmus GA = new GenetickyAlgoritmus(this.spoje, this.maticaVzdialenosti, this.maticaSpotreby, p[6]);
-                GA.genetickyAlgoritmus(p[0], p[1], p[2], p[3], p[4], p[5]);
+                GA.run(p[0], p[1], p[2], p[3], p[4], p[5]);
                 this.noveOhodnotenie = GA.dajOhodnotenieDNNR();
 
                 if (this.noveOhodnotenie < stareOhodnotenieP) {
