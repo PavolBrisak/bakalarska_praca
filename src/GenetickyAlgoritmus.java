@@ -63,7 +63,7 @@ public class GenetickyAlgoritmus {
     public void run(double pocetMinut, double pocetNeaktualizovaniaDNNR, double pravdepodobnostKrizenia, double pocetMutacii, double pravdepodobnostMutacie, double percentoTopRieseni) {
         long start = System.currentTimeMillis();
         int neaktualizovaneDNNR = 0;
-        while ((((double)(System.currentTimeMillis() - start) / 60000) < pocetMinut) && (neaktualizovaneDNNR < pocetNeaktualizovaniaDNNR)) {
+        while ((((double) (System.currentTimeMillis() - start) / 60000) < pocetMinut) && (neaktualizovaneDNNR < pocetNeaktualizovaniaDNNR)) {
             boolean dosloKAktualizaciiDNNR = false;
             this.naplnenieTopRieseniami(percentoTopRieseni);
             while (this.novaPopulacia.size() < this.velkostPopulacie) {
@@ -143,12 +143,12 @@ public class GenetickyAlgoritmus {
 
     private int dajPoziciuRodica() {
         double sumaOhodnoteni = 0.0;
-        for (Riesenie riesenie:this.staraPopulacia) {
+        for (Riesenie riesenie : this.staraPopulacia) {
             sumaOhodnoteni += riesenie.getOhodnotenie();
         }
         double random = this.random.nextDouble();
         double pomocna = 0.0;
-        for (Riesenie riesenie:this.staraPopulacia) {
+        for (Riesenie riesenie : this.staraPopulacia) {
             pomocna += riesenie.getOhodnotenie() / sumaOhodnoteni;
             if (random < pomocna) {
                 return this.staraPopulacia.indexOf(riesenie);
@@ -158,7 +158,7 @@ public class GenetickyAlgoritmus {
     }
 
     private void krizenie(int poziciaRodica1, int poziciaRodica2, Riesenie potomok) {
-       int bodKrizeniaRodic1 = this.random.nextInt(0, this.staraPopulacia.get(poziciaRodica1).getTurnusy().size());
+        int bodKrizeniaRodic1 = this.random.nextInt(0, this.staraPopulacia.get(poziciaRodica1).getTurnusy().size());
         for (int i = 0; i <= bodKrizeniaRodic1; i++) {
 
             potomok.pridajTurnus(this.staraPopulacia.get(poziciaRodica1).getTurnusy().get(i));
@@ -272,14 +272,10 @@ public class GenetickyAlgoritmus {
     private void naplnenieTopRieseniami(double percentoTopRieseni) {
         ArrayList<Riesenie> pomocnaPopulacia = new ArrayList<>(this.staraPopulacia);
         double pocet;
-        if (percentoTopRieseni >= 0 && percentoTopRieseni <= 1) {
-            pocet = ((percentoTopRieseni * 100) * this.velkostPopulacie) / 100;
-            pomocnaPopulacia.sort(Comparator.comparingDouble(Riesenie::getOhodnotenie));
-            for (int i = 0; i < pocet; i++) {
-                this.novaPopulacia.add(pomocnaPopulacia.get(i));
-            }
-        } else {
-            System.out.println("Nesprávne zadané percento top riešení. Má byť medzi 0 a 1");
+        pocet = ((percentoTopRieseni * 100) * this.velkostPopulacie) / 100;
+        pomocnaPopulacia.sort(Comparator.comparingDouble(Riesenie::getOhodnotenie));
+        for (int i = 0; i < pocet; i++) {
+            this.novaPopulacia.add(pomocnaPopulacia.get(i));
         }
     }
 

@@ -33,18 +33,26 @@ public class Main {
             switch (volba) {
                 case 1:
                     System.out.println("Zadajte parametre genetického algoritmu:");
-                    double pocetMinut = Pomocnik.readDoubleFromConsole("Zadajte počet minút: ", 1.0);
+                    double pocetMinut = Pomocnik.readDoubleFromConsole("Zadajte počet minút: ", 0.5);
                     double pocetNeaktualizovaniaDNNR = Pomocnik.readIntFromConsole("Zadajte počet neaktualizovania DNNR: ", 10);
                     double pravdepodobnostKrizenia = Pomocnik.readDoubleFromConsole("Zadajte pravdepodobnosť kríženia: ", 0.05, 1.0);
                     double pocetMutacii = Pomocnik.readIntFromConsole("Zadajte počet mutácií: ", 0);
                     double pravdepodobnostMutacie = Pomocnik.readDoubleFromConsole("Zadajte pravdepodobnosť mutácie: ", 0.0, 1.0);
                     double percentoTopRieseni = Pomocnik.readDoubleFromConsole("Zadajte percento top riešení: ", 0.0, 1.0);
                     double velkostPopulacie = Pomocnik.readIntFromConsole("Zadajte veľkosť populácie: ", 2);
+                    int pocetOpakovani = Pomocnik.readIntFromConsole("Zadajte počet replikácií: ", 1);
 
+                    double vysledok = 0;
                     System.out.println("Spúšťam genetický algoritmus...");
-                    GenetickyAlgoritmus GA = new GenetickyAlgoritmus(nacitaneSpoje, maticaVzdialenosti, maticaSpotreby, velkostPopulacie);
-                    GA.run(pocetMinut, pocetNeaktualizovaniaDNNR, pravdepodobnostKrizenia, pocetMutacii, pravdepodobnostMutacie, percentoTopRieseni);
-                    GA.vypisDNNR();
+                    for (int i = 0; i < pocetOpakovani; i++) {
+                        GenetickyAlgoritmus GA = new GenetickyAlgoritmus(nacitaneSpoje, maticaVzdialenosti, maticaSpotreby, velkostPopulacie);
+                        GA.run(pocetMinut, pocetNeaktualizovaniaDNNR, pravdepodobnostKrizenia, pocetMutacii, pravdepodobnostMutacie, percentoTopRieseni);
+                        GA.vypisDNNR();
+                        vysledok += GA.dajOhodnotenieDNNR();
+                        System.out.println();
+                    }
+                    System.out.println("Priemerné ohodnotenie DNNR: " + vysledok / pocetOpakovani);
+                    System.out.println();
 
                     break;
                 case 2:
@@ -87,6 +95,7 @@ public class Main {
                     break;
             }
 
+            System.out.println();
             System.out.println("Chcete ísť odznova?");
             Moznosti moznostiYesNo = new Moznosti();
             moznostiYesNo.addYesNoOptions();

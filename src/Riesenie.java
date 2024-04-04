@@ -36,11 +36,9 @@ public class Riesenie {
     public void vypis() {
         System.out.println("Počet vozidiel: " + this.pocetVozidiel);
         System.out.println("Ohodnotenie: " + this.ohodnotenie);
-        System.out.println("*************************");
         for (Turnus turnus:this.turnusy) {
             turnus.vypis();
         }
-        System.out.println("*************************");
     }
 
     public int getPocetSpojov() {

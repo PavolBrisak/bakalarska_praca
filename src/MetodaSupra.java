@@ -163,26 +163,6 @@ public class MetodaSupra {
         }
     }
 
-    private double[] dajNahodneParametreVOkoliA(double A, double[] pk) {
-        double[] nahodneParametre = new double[this.pociatocneParametre.size()];
-
-        for (int i = 0; i < pk.length; i++) {
-            int index = i * 2;
-
-            double rozdiel = this.horneADolneHranice.get(index + 1) - pk[i];
-            double rozdiel2 = pk[i] - this.horneADolneHranice.get(index);
-            double vacsiRozdiel = Math.max(rozdiel, rozdiel2);
-
-            double hornaHranica = pk[i] + (vacsiRozdiel * A);
-            double dolnaHranica = pk[i] - (vacsiRozdiel * A);
-            double nahodnaHodnota = (Math.random() * (hornaHranica - dolnaHranica + 1) + dolnaHranica);
-            nahodneParametre[i] = nahodnaHodnota;
-            nahodneParametre[i] = Math.round(nahodneParametre[i] * 100.0) / 100.0;
-        }
-
-        return nahodneParametre;
-    }
-
     private double[] dajLokalnuHranicu(double[] vektor, double A) {
         double[] hranice = new double[this.pociatocneParametre.size()];
 
