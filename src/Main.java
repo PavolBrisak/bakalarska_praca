@@ -73,7 +73,7 @@ public class Main {
                 case 3:
                     System.out.println("Zvolte si parameter, ktorý chcete nastaviť:");
                     Moznosti moznostiGridSearch = new Moznosti();
-                    moznostiGridSearch.addOption(1, "Počet minút", 1.0, 100.0);
+                    moznostiGridSearch.addOption(1, "Počet minút", 0.5, 100.0);
                     moznostiGridSearch.addOption(2, "Počet neaktualizovania DNNR", 10.0, 1000.0);
                     moznostiGridSearch.addOption(3, "Pravdepodobnosť kríženia", 0.05, 1.0);
                     moznostiGridSearch.addOption(4, "Počet mutácií", 0.0, 100.0);
